@@ -1,0 +1,107 @@
+# Xcode
+#
+.DS_Store
+*/.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*~
+.idea/
+.vscode/
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserstate
+
+# Swift Package Manager
+#
+.build/
+.swiftpm/
+
+# Swift PM Packages
+Packages
+Package.pins
+Package.resolved
+
+# CocoaPods
+#
+Pods/
+DerivedData/
+.cocoapods/
+*.lock
+*.xcworkspace/
+
+# Carthage
+#
+Carthage/Build/
+
+# Accio dependency management
+#
+.dependencies/
+
+# fastlane
+#
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+# Code coverage / Xcode
+#
+*.gcno
+*.gcda
+*.profdata
+*.profraw
+
+# AppCode
+#
+.idea/
+
+# VS Code
+#
+.vscode/
+
+# Generated files
+#
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Temporary files
+#
+*.tmp
+*.temp
+*.swp
+
+# Build artifacts
+#
+build/
+DerivedData/
+*.app
+*.app.dSYM
+*.framework
+*.module
+*.dSYM
+
+# Playground
+#
+timeline.xctimeline
+playground.xcworkspace
+
+# Xcode automatically generated files
+#
+*.xcscmblueprint
+*.xcuserstate
+
+# Mac OS files
+#
+*.DS_Store
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+ImageShareApp/GoogleService-Info.plist
