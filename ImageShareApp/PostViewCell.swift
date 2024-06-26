@@ -9,6 +9,7 @@ import UIKit
 
 protocol PostViewCellProtocol {
     func clicked(indexPath: IndexPath)
+    func showComments(indexPath:IndexPath)
 }
 
 class PostViewCell: UITableViewCell {
@@ -43,5 +44,9 @@ class PostViewCell: UITableViewCell {
     @IBAction func likePost(_ sender: Any) {
         cellProtocol?.clicked(indexPath: indexPath!)
     }
-
+    
+    @IBAction func showComments(_ sender: Any) {
+        cellProtocol?.showComments(indexPath: indexPath!)
+    }
+    
 }

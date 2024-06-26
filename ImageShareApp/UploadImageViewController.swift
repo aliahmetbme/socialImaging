@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import FirebaseStorage
 
-class UploadImageViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+class UploadImageViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet var comment: UITextField!
     @IBOutlet var openCamerabutton: UIButton!
@@ -19,12 +19,17 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     let initialImage = UIImage(named: "uploadimage")
 
     var selectedImage: UIImage?
+    var currentTextField: UITextField?
+
+    var originalTransform: CGAffineTransform = .identity // originalTransform'u tanımlayın
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         uploadImage.image = initialImage
         
         //checkIsShouldEnabledUploadButton()
+        comment.delegate = self
              
         uploadImage.layer.cornerRadius = 20
         uploadbutton.layer.cornerRadius = 15
@@ -122,7 +127,9 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                                 
                                 let fireStoreDataBase = Firestore.firestore()
                                 
-                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp()  ] as [String : Any]
+                                let comments:[String] = ["Çok güzel olmuş", "Çok beğendim", "çok iğrenç"]
+                                
+                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments  ] as [String : Any]
                                                                
                                 fireStoreDataBase.collection("Post").addDocument(data: fireStorePost) { error in
                                     if error != nil {
@@ -160,20 +167,39 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         self.present(alert, animated: true, completion: nil)
     }
     
-    @objc func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardHeight = keyboardFrame.height / (self.view.frame.size.height * 0.01)
-                
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-            self.navigationController?.navigationBar.isHidden = true
-        }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        currentTextField = textField
     }
     
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        currentTextField = nil
+    }
+        
+    @objc func keyboardWillShow(_ notification: Notification) {
+            guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            
+            // currentTextField güncellenmiş olmalı
+            guard let textField = currentTextField else { return }
+            
+            let textFieldFrame = textField.convert(textField.bounds, to: nil)
+            let maxY = textFieldFrame.maxY
+            let keyboardY = keyboardFrame.origin.y
+            
+            if maxY > keyboardY {
+                let keyboardHeight = maxY - keyboardY
+                
+                UIView.animate(withDuration: 0.1) {
+                    self.originalTransform = self.view.transform
+                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
+                    self.navigationController?.setNavigationBarHidden(true, animated: true)
+                }
+            }
+      }
+
     @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.1) {
             self.view.transform = .identity
-            self.navigationController?.navigationBar.isHidden = false
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
         }
     }
     

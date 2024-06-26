@@ -51,9 +51,9 @@ class MainPageViewController: UIViewController {
                         let email = document.get("email") as? String ?? ""
                         let date = document.get("date") as? String ?? ""
                         let description = document.get("comment") as? String ?? ""
-                        print(imageurl)
-                        let post = PostModel(email: email, imageUrl: imageurl, description: description, date: date)
-                        print(post)
+                        let comments = document.get("comments") as? [String] ?? []
+                        
+                        let post = PostModel(email: email, imageUrl: imageurl, description: description, date: date, comments: comments)
                         self.postArray.append(post)
                         
                         DispatchQueue.main.async {
@@ -70,8 +70,24 @@ class MainPageViewController: UIViewController {
 
 extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, PostViewCellProtocol {
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "goCommentsVC" {
+            if let indexPath = sender as? IndexPath {
+                let secondVC = segue.destination as! CommentsPageViewController
+                
+                let post = postArray[indexPath.row]
+                secondVC.comments = post.comments
+            }
+        }
+    }
+
+    func showComments(indexPath: IndexPath) {
+        performSegue(withIdentifier: "goCommentsVC", sender: indexPath)
+    }
+        
     func clicked(indexPath: IndexPath) {
-        print("tıklandı")
         
         if let cell = postsList.cellForRow(at: indexPath) as? PostViewCell {
              let icon = UIImage(systemName: "heart.fill")
@@ -102,3 +118,6 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
         return cell
     }
 }
+
+
+ 

@@ -12,8 +12,13 @@ import FirebaseStorage
 
 class ProfilePageViewController: UIViewController {
 
+    @IBOutlet var profilepicture: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
+        profilepicture.layer.cornerRadius = 100
+        profilepicture.clipsToBounds = true
         // Do any additional setup after loading the view.
     }
     
