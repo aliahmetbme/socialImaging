@@ -13,11 +13,12 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var ppImage: UIImageView!
     @IBOutlet var addComment: UITextField!
     @IBOutlet var commentsLists: UITableView!
+    @IBOutlet var addCommentButton: UIButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationController?.navigationBar.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
@@ -30,29 +31,13 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
         commentsLists.delegate = self
         commentsLists.dataSource = self
         
-        // Sol tarafta buton eklemek için bir UIButton oluşturun
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
-        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        button.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
-                
-        // UITextField'a sol view olarak butonu ata
-        addComment.leftView = button
-        addComment.leftViewMode = .always
-        
         addComment.layer.borderWidth = 1.0 // Kenarlık genişliği
-        addComment.layer.cornerRadius = 17.0
+        addComment.layer.cornerRadius = 20.0
         
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: addComment.frame.height))
         addComment.leftView = paddingView
         addComment.leftViewMode = .always
         addComment.delegate = self
-    }
-    
-    @objc func searchButtonTapped() {
-        // Burada buton tıklandığında yapılacak işlemleri tanımlayabilirsiniz
-        print("Search button tapped!")
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {

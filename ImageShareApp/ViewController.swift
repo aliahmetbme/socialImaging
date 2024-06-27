@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var serverError: UILabel!
     @IBOutlet var incorrectpassword: UILabel!
@@ -20,12 +20,32 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.isHidden = true
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
-        // Do any additional setup after loading the view.
+
+        emailTextfield.layer.borderWidth = 1.0 // Kenarlık genişliği
+        emailTextfield.layer.cornerRadius = 8.0
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: emailTextfield.frame.height))
+        emailTextfield.leftView = paddingView
+        emailTextfield.leftViewMode = .always
+        emailTextfield.delegate = self
+        
+        
+        passwprdTextfield.layer.borderWidth = 1.0 // Kenarlık genişliği
+        passwprdTextfield.layer.cornerRadius = 8.0
+        
+        
+        let paddingView_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: emailTextfield.frame.height))
+        passwprdTextfield.leftView = paddingView_
+        passwprdTextfield.leftViewMode = .always
+        passwprdTextfield.delegate = self
+
     }
     
     @IBAction func logIn(_ sender: Any) {
@@ -142,9 +162,7 @@ class ViewController: UIViewController {
             }
             // async sunucuya yolla kullanıcı oluşturur ya da hata döner vb. cevabın ne zaman geleceği belli değil
             // bu arada kullanıcı işlemlerine devam edebilmesi için async çalışır
-            
-            
-            
+                        
         }
 
     }
@@ -157,11 +175,10 @@ class ViewController: UIViewController {
             self.navigationController?.navigationBar.isHidden = true
         }
     }
-    
+
     @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.1) {
             self.view.transform = .identity
-            self.navigationController?.navigationBar.isHidden = false
         }
     }
     
@@ -170,11 +187,13 @@ class ViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         view.endEditing(true)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-            view.endEditing(true)
+        super.viewDidDisappear(animated)
+        view.endEditing(true)
 
     }
     

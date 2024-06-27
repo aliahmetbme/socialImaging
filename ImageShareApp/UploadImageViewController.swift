@@ -75,16 +75,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        // TODO:
-        // resim boyutunu tekrar ele al
-        // ya aynısını koyup backgroundu yok et
-        
-        // uploadImage.backgroundColor = .systemBackground
-        // uploadImage.image = info[.editedImage] as? UIImage
-
         selectedImage = info[.editedImage] as? UIImage
-        
-        // ya boyunu ayarla
         uploadImage.image = selectedImage?.resized(to: CGSize(width: uploadImage.frame.width, height: uploadImage.frame.height))
         
         self.dismiss(animated: true)
@@ -127,6 +118,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                                 
                                 let fireStoreDataBase = Firestore.firestore()
                                 
+                                // TODO: commentleri gerçekten al, burda commentler boş olucak
                                 let comments:[String] = ["Çok güzel olmuş", "Çok beğendim", "çok iğrenç"]
                                 
                                 let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments  ] as [String : Any]
@@ -146,13 +138,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                                         self.comment.text = ""
                                     }
                                 }
-                            } else {
-                                self.showErrorMessage(title: "Hatttaaaa", message: error?.localizedDescription ?? "Try again")
-                                print( "Hatttaaaa")
                             }
-                        }  else {
-                            self.showErrorMessage(title: "Hatta", message: error?.localizedDescription ?? "Try again")
-                            print( "Hattta")
                         }
                     }
                 }
@@ -174,7 +160,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     func textFieldDidEndEditing(_ textField: UITextField) {
         currentTextField = nil
     }
-        
+    // TODO: klavye işini hallet
     @objc func keyboardWillShow(_ notification: Notification) {
             guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
             

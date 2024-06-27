@@ -17,9 +17,13 @@ class ProfilePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
-        profilepicture.layer.cornerRadius = 100
+        profilepicture.layer.cornerRadius = 75
         profilepicture.clipsToBounds = true
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
     }
     
     @IBAction func logout(_ sender: Any) {
@@ -30,5 +34,11 @@ class ProfilePageViewController: UIViewController {
         }
         performSegue(withIdentifier: "toLoginVc", sender: nil)
     }
+    @IBAction func goSettingsPage(_ sender: Any) {
+        performSegue(withIdentifier: "toSettingsPage", sender: nil)
 
+    }
+    
+    // TODO: Postları ekle
+    // TODO: post sayısını gerçekten al
 }
