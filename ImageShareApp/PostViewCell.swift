@@ -21,6 +21,7 @@ class PostViewCell: UITableViewCell {
     @IBOutlet var commentButton: UIButton!
     @IBOutlet var usernameDown: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet var likeCount: UILabel!
     
     var cellProtocol:PostViewCellProtocol?
     var indexPath:IndexPath?

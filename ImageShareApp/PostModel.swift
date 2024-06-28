@@ -14,12 +14,18 @@ class PostModel {
     var description: String?
     var date: String?
     var comments: [String]
+    var likeCount: Int
+    var usersProfileImageUrl: String
+    var postId: String
     
-    init(email: String? = nil, imageUrl: String? = nil, description: String? = nil, date: String? = nil, comments: [String]) {
+    init(email: String? = nil, imageUrl: String? = nil, description: String? = nil, date: String? = nil, comments: [String], likeCount: Int, usersProfileImageUrl: String, postId: String) {
         self.email = email
         self.imageUrl = imageUrl
         self.description = description
         self.date = date
         self.comments = comments
+        self.likeCount = likeCount
+        self.usersProfileImageUrl = usersProfileImageUrl
+        self.postId = postId
     }
 }

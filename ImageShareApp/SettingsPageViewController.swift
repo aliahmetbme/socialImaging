@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseStorage
 
 class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
@@ -24,6 +26,43 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     override func viewDidLoad() {
         super.viewDidLoad()
         profilePictureDesign()
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: passwordTextField.frame.height))
+        passwordTextField.leftView = paddingView
+        passwordTextField.leftViewMode = .always
+        passwordTextField.delegate = self
+        
+        passwordTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
+        passwordTextField.layer.cornerRadius = 8.0
+        passwordTextField.layer.borderColor = UIColor.gray.cgColor
+        
+        
+        let paddingView_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: emailTextField.frame.height))
+        emailTextField.leftView = paddingView_
+        emailTextField.leftViewMode = .always
+        emailTextField.delegate = self
+        
+        emailTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
+        emailTextField.layer.cornerRadius = 8.0
+        emailTextField.layer.borderColor = UIColor.gray.cgColor
+
+        let _paddingView_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: usernameTextField.frame.height))
+        usernameTextField.leftView = _paddingView_
+        usernameTextField.leftViewMode = .always
+        usernameTextField.delegate = self
+        
+        usernameTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
+        usernameTextField.layer.cornerRadius = 8.0
+        usernameTextField.layer.borderColor = UIColor.gray.cgColor
+
+        let _padding_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: nameTextField.frame.height))
+        nameTextField.leftView = _padding_
+        nameTextField.leftViewMode = .always
+        nameTextField.delegate = self
+        
+        nameTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
+        nameTextField.layer.cornerRadius = 8.0
+        nameTextField.layer.borderColor = UIColor.gray.cgColor
 
     }
     
@@ -66,14 +105,44 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            profilePicture.image = selectedImage
+            
+            let storage = Storage.storage()
+            
+            // Resmi Firebase Storage'a yükleyin ve URL'yi alın
+            if let imageData = selectedImage.jpegData(compressionQuality: 0.5) {
+                let storageRef = storage.reference().child("profile_pictures").child("\(Auth.auth().currentUser?.uid ?? "default").jpg")
+                
+                storageRef.putData(imageData, metadata: nil) { metadata, error in
+                    if error != nil {
+                        print("Error uploading image: \(error?.localizedDescription ?? "Unknown error")")
+                        return
+                    }
+                    
+                    storageRef.downloadURL { url, error in
+                        if let downloadURL = url {
+                            // Kullanıcı profilini güncelleyin
+                            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                            changeRequest?.photoURL = downloadURL
+                            changeRequest?.commitChanges { error in
+                                if let error = error {
+                                    print("Error updating profile: \(error.localizedDescription)")
+                                } else {
+                                    print("Profile updated successfully")
+                                }
+                            }
+                        } else {
+                            print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+                        }
+                    }
+                }
+            }
+        }
         
-        profilePicture.image = info[.editedImage] as? UIImage
-        
-        self.dismiss(animated: true)
-        
-        // TODO: Resmi hesaba ata
-                            
+        self.dismiss(animated: true, completion: nil)
     }
+
 
     
     

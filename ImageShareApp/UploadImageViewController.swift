@@ -27,7 +27,6 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         uploadImage.image = initialImage
-        
         //checkIsShouldEnabledUploadButton()
         comment.delegate = self
              
@@ -97,6 +96,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         let storageReferance = storage.reference()
         
         let mediaFolder = storageReferance.child("media")
+        let profilePictureFolder = storageReferance.child("profile_pictures")
         // child direk dosya açıyor altına
         
         if let ImageData = selectedImage?.jpegData(compressionQuality: 0.5) {
@@ -104,7 +104,20 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
             let uuid = UUID().uuidString // Direk uydurma bir id veriyor, farklılaştırma adına
             
             let imageReferance = mediaFolder.child("\(uuid).jpg")
+            var profileImageUrl = ""
             
+            
+            if let uid = Auth.auth().currentUser?.uid {
+                let profilePictureReferance = profilePictureFolder.child("\(uid).jpg")
+                
+                profilePictureReferance.downloadURL { url, Error in
+                    if Error == nil {
+                        profileImageUrl = url!.absoluteString
+                    }
+                }
+                
+            }
+                
             imageReferance.putData(ImageData) { StorageMetadata, error in
                 if error != nil {
                     self.showErrorMessage(title: "Error", message:  (error?.localizedDescription ?? "Try again"))
@@ -118,10 +131,11 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                                 
                                 let fireStoreDataBase = Firestore.firestore()
                                 
-                                // TODO: commentleri gerçekten al, burda commentler boş olucak
-                                let comments:[String] = ["Çok güzel olmuş", "Çok beğendim", "çok iğrenç"]
-                                
-                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments  ] as [String : Any]
+                                let comments:[String] = []
+                                let likeCount = 0
+                                let likes:[String] = []
+                                                            
+                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments, "likeCount": likeCount, "userProfileImage": profileImageUrl, "likes":likes ] as [String : Any]
                                                                
                                 fireStoreDataBase.collection("Post").addDocument(data: fireStorePost) { error in
                                     if error != nil {
