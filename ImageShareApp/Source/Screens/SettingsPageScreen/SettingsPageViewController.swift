@@ -8,100 +8,24 @@
 import UIKit
 import FirebaseAuth
 import FirebaseStorage
-
+import FirebaseFirestore
 class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
     @IBOutlet var profilePicture: UIImageView!
-    private var buttomConstraint: NSLayoutConstraint!
-
-    var originalTransform: CGAffineTransform = .identity // originalTransform'u tanımlayın
-    var currentTextField: UITextField?
-    
-
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var nameTextField: UITextField!
+    var imageURL: URL?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         profilePictureDesign()
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: passwordTextField.frame.height))
-        passwordTextField.leftView = paddingView
-        passwordTextField.leftViewMode = .always
-        passwordTextField.delegate = self
-        
-        passwordTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
-        passwordTextField.layer.cornerRadius = 8.0
-        passwordTextField.layer.borderColor = UIColor.gray.cgColor
-        
-        
-        let paddingView_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: emailTextField.frame.height))
-        emailTextField.leftView = paddingView_
-        emailTextField.leftViewMode = .always
-        emailTextField.delegate = self
-        
-        emailTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
-        emailTextField.layer.cornerRadius = 8.0
-        emailTextField.layer.borderColor = UIColor.gray.cgColor
+        passwordTextField.initialTextFieldDesign()
+        emailTextField.initialTextFieldDesign()
+        usernameTextField.initialTextFieldDesign()
+        nameTextField.initialTextFieldDesign()
 
-        let _paddingView_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: usernameTextField.frame.height))
-        usernameTextField.leftView = _paddingView_
-        usernameTextField.leftViewMode = .always
-        usernameTextField.delegate = self
-        
-        usernameTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
-        usernameTextField.layer.cornerRadius = 8.0
-        usernameTextField.layer.borderColor = UIColor.gray.cgColor
-
-        let _padding_ = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: nameTextField.frame.height))
-        nameTextField.leftView = _padding_
-        nameTextField.leftViewMode = .always
-        nameTextField.delegate = self
-        
-        nameTextField.layer.borderWidth = 1.0 // Kenarlık genişliği
-        nameTextField.layer.cornerRadius = 8.0
-        nameTextField.layer.borderColor = UIColor.gray.cgColor
-
-    }
-    
-    @IBAction func turnBackProfilePage(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @IBAction func takeImage(_ sender: Any) {
-        
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let pickerController = UIImagePickerController()
-
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        let chooseCamera = UIAlertAction(title: "Camera", style: .default) { UIAlertAction in
-            
-            pickerController.delegate = self
-            pickerController.sourceType = .camera
-            pickerController.showsCameraControls = true
-            pickerController.allowsEditing = true
-            self.present(pickerController, animated: true, completion: nil)
-            
-        }
-        
-        let chooseGallary = UIAlertAction(title: "Photo Gallary", style: .default) { UIAlertAction in
-            
-            pickerController.delegate = self
-            pickerController.sourceType = .photoLibrary
-            pickerController.allowsEditing = true
-            self.present(pickerController, animated: true, completion: nil)
-        }
-        
-        alert.addAction(chooseCamera)
-        alert.addAction(chooseGallary)
-        alert.addAction(cancel)
-
-        present(alert, animated: true, completion: nil)
-        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -122,16 +46,7 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
                     
                     storageRef.downloadURL { url, error in
                         if let downloadURL = url {
-                            // Kullanıcı profilini güncelleyin
-                            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-                            changeRequest?.photoURL = downloadURL
-                            changeRequest?.commitChanges { error in
-                                if let error = error {
-                                    print("Error updating profile: \(error.localizedDescription)")
-                                } else {
-                                    print("Profile updated successfully")
-                                }
-                            }
+                            self.imageURL = url
                         } else {
                             print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
                         }
@@ -142,9 +57,6 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
         
         self.dismiss(animated: true, completion: nil)
     }
-
-
-    
     
     func profilePictureDesign() {
         profilePicture.layer.cornerRadius = 50
@@ -160,15 +72,6 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
         view.addGestureRecognizer(tapGesture)
 
     }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        currentTextField = textField
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        currentTextField = nil
-    }
-    
         
     @objc func keyboardWillShow(_ notification: Notification) {
        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
@@ -201,4 +104,74 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
 
     }
 
+}
+
+
+// Actions
+extension SettingsPageViewController {
+    
+    
+    @IBAction func turnBackProfilePage(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func takeImage(_ sender: Any) {
+        
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let pickerController = UIImagePickerController()
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let chooseCamera = UIAlertAction(title: "Camera", style: .default) { UIAlertAction in
+            
+            pickerController.delegate = self
+            pickerController.sourceType = .camera
+            pickerController.showsCameraControls = true
+            pickerController.allowsEditing = true
+            self.present(pickerController, animated: true, completion: nil)
+        }
+        
+        let chooseGallary = UIAlertAction(title: "Photo Gallary", style: .default) { UIAlertAction in
+            
+            pickerController.delegate = self
+            pickerController.sourceType = .photoLibrary
+            pickerController.allowsEditing = true
+            self.present(pickerController, animated: true, completion: nil)
+        }
+        
+        alert.addAction(chooseCamera)
+        alert.addAction(chooseGallary)
+        alert.addAction(cancel)
+
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
+    @IBAction func saveChanges () {
+        
+        print("deneme")
+        
+        // change name
+        if (nameTextField.text != ""){
+            updateDisplayName(newDisplayName: nameTextField.text!)
+        }
+        
+        // change user name
+        if (usernameTextField.text != "") {
+            if let uid = Auth.auth().currentUser?.uid  {
+                Firestore.firestore().collection("User").document(uid).setData(["userName": usernameTextField.text!]) {
+                    error in if error != nil {
+                        print(error?.localizedDescription as Any)
+                    }
+                }
+            }
+        }
+        
+        // change password
+        if (passwordTextField.text != "") {
+            changePassword(newPassword: passwordTextField.text!)
+        }
+        
+        if let url = imageURL {
+            self.updateUserPhotoURL(downloadURL: url)
+        }
+    }
 }

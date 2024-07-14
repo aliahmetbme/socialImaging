@@ -16,15 +16,31 @@ class ProfilePageViewController: UIViewController {
     @IBOutlet var postCount: UILabel!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var profilepicture: UIImageView!
+    @IBOutlet var usernameLabel: UILabel!
     
     var postArray: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
+        
         profilepicture.layer.cornerRadius = 50
         profilepicture.clipsToBounds = true
+                
+        postsTable.delegate = self
+        postsTable.dataSource = self
         
+        getUsersPostfromDB()
+        initialSettings()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+        initialSettings()
+    }
+    
+    func initialSettings () {
         if let profilePictureURL = Auth.auth().currentUser?.photoURL?.absoluteString {
             profilepicture.sd_setImage(with: URL(string: profilePictureURL))
         }
@@ -33,14 +49,11 @@ class ProfilePageViewController: UIViewController {
             nameLabel.text = Name
         }
         
-        postsTable.delegate = self
-        postsTable.dataSource = self
-        getUsersPostfromDB()
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
+        getUserName { userName in
+            if let username = userName {
+                self.usernameLabel.text = "@\(username)"
+            }
+        }
     }
     
     func getUsersPostfromDB () {
@@ -51,6 +64,7 @@ class ProfilePageViewController: UIViewController {
         fireStoredb.collection("Post").whereField("email", isEqualTo: userEmail as Any).order(by:"date", descending: true).addSnapshotListener { querySnapshot, error in
             if error != nil {
                 print("Veri alınamadı: \(String(describing: error?.localizedDescription))")
+                self.postCount.text = "\(self.postArray.count)"
                 return
             } else {
                 if let snapshot = querySnapshot, !snapshot.isEmpty {
@@ -71,12 +85,13 @@ class ProfilePageViewController: UIViewController {
                         let post = PostModel(email: email, imageUrl: imageurl, description: description, date: date, comments: comments, likeCount: likeCount, usersProfileImageUrl: userProfileImageUrl, postId: documentid)
                         
                         self.postArray.append(post)
-
+                        
                         DispatchQueue.main.async {
-                           self.postsTable.reloadData() // TableView'i güncelle
-                           self.postCount.text = "\(self.postArray.count)"
-                        }
+                            self.postsTable.reloadData()
+                        }  
                     }
+                    self.postCount.text = "\(self.postArray.count)"
+
                 } else {
                     print("Post Yok")
                 }
@@ -84,6 +99,25 @@ class ProfilePageViewController: UIViewController {
         }
     }
 }
+
+// Actions
+extension ProfilePageViewController {
+    
+    @IBAction func logout(_ sender: Any) {
+        do {
+           try Auth.auth().signOut()
+        } catch {
+            print("Hata")
+        }
+        performSegue(withIdentifier: "toLoginVc", sender: nil)
+    }
+    
+    @IBAction func goSettingsPage(_ sender: Any) {
+        performSegue(withIdentifier: "toSettingsPage", sender: nil)
+
+    }
+}
+
 
 // UITableView
 extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource, UserPostViewCellProtocol {
@@ -104,7 +138,6 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
     
     func showComments(indexPath: IndexPath) {
         performSegue(withIdentifier: "profiletocommentVC", sender: indexPath)
-        print("clicked")
     }
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -132,24 +165,5 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
-    }
-
-}
-
-// Actions
-extension ProfilePageViewController {
-    
-    @IBAction func logout(_ sender: Any) {
-        do {
-           try Auth.auth().signOut()
-        } catch {
-            print("Hata")
-        }
-        performSegue(withIdentifier: "toLoginVc", sender: nil)
-    }
-    
-    @IBAction func goSettingsPage(_ sender: Any) {
-        performSegue(withIdentifier: "toSettingsPage", sender: nil)
-
     }
 }

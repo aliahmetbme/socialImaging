@@ -11,11 +11,9 @@ import FirebaseAuth
 import FirebaseStorage
 
 class RegistrationPageViewController: UIViewController {
-
+    
     @IBOutlet private var emailTextField: UITextField!
-    
     @IBOutlet var nameTextField: UITextField!
-    
     @IBOutlet private var userNameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var rePasswordTextField: UITextField!
@@ -27,12 +25,9 @@ class RegistrationPageViewController: UIViewController {
         nameTextField.initialTextFieldDesign()
         passwordTextField.initialTextFieldDesign()
         rePasswordTextField.initialTextFieldDesign()
-
+        
     }
-
-    
 }
-
 // Actions
 extension RegistrationPageViewController {
     
@@ -42,21 +37,27 @@ extension RegistrationPageViewController {
     
     @IBAction func register(_ sender: Any) {
         
-        // password check
-        if  passwordMatchCheck(password: passwordTextField, rePassword: rePasswordTextField) {
-            if (emailTextField.text != "" && userNameTextField.text != "") {
+        // null check
+        if  (emailTextField.text != "" && userNameTextField.text != "" && nameTextField.text  != "")  {
+            // password match check
+            if (passwordMatchCheck(password: passwordTextField, rePassword: rePasswordTextField)) {
                 Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { authDataResult, error in
                     if (error != nil) {
                         print(error as Any)
                     } else {
                         
-                        Firestore.firestore().collection("User").addDocument(data: ["userName":self.userNameTextField.text!]) {
-                            error in if error != nil {
-                                print(error?.localizedDescription as Any)
+                        // setting Name
+                        self.updateDisplayName(newDisplayName: self.nameTextField.text!)
+                        
+                        // setting username via path users uid
+                        if let uid = authDataResult?.user.uid  {
+                            Firestore.firestore().collection("User").document(uid).setData(["userName":self.userNameTextField.text!]) {
+                                error in if error != nil {
+                                    print(error?.localizedDescription as Any)
+                                }
                             }
                         }
-                        
-                        self.performSegue(withIdentifier: "RegtoFeedVC", sender: nil)
+                      self.performSegue(withIdentifier: "RegtoFeedVC", sender: nil)
                     }
                 }
             }

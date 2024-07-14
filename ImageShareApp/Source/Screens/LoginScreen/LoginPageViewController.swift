@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class ViewController: UIViewController {
+class LoginPageViewController: UIViewController {
 
     @IBOutlet var serverError: UILabel!
     @IBOutlet var incorrectpassword: UILabel!
@@ -70,7 +70,7 @@ class ViewController: UIViewController {
 }
 
 // Actions
-extension ViewController {
+extension LoginPageViewController {
     
     @IBAction func register(_ sender: Any) {
         performSegue(withIdentifier: "goRegistrationVC", sender: nil)

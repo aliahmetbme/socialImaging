@@ -41,7 +41,7 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
         
         ppImage.layer.cornerRadius = 20
         ppImage.clipsToBounds = true
-        ppImage.sd_setImage(with: URL(string: curretUserProfilePictureURL!))
+        ppImage.sd_setImage(with: URL(string: curretUserProfilePictureURL ?? ""))
         
         commentsLists.delegate = self
         commentsLists.dataSource = self
