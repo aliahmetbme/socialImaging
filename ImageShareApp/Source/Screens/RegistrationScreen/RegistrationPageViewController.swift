@@ -13,6 +13,9 @@ import FirebaseStorage
 class RegistrationPageViewController: UIViewController {
 
     @IBOutlet private var emailTextField: UITextField!
+    
+    @IBOutlet var nameTextField: UITextField!
+    
     @IBOutlet private var userNameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var rePasswordTextField: UITextField!
@@ -21,6 +24,7 @@ class RegistrationPageViewController: UIViewController {
         super.viewDidLoad()
         emailTextField.initialTextFieldDesign()
         userNameTextField.initialTextFieldDesign()
+        nameTextField.initialTextFieldDesign()
         passwordTextField.initialTextFieldDesign()
         rePasswordTextField.initialTextFieldDesign()
 
@@ -48,7 +52,7 @@ extension RegistrationPageViewController {
                         
                         Firestore.firestore().collection("User").addDocument(data: ["userName":self.userNameTextField.text!]) {
                             error in if error != nil {
-                                print(error?.localizedDescription)
+                                print(error?.localizedDescription as Any)
                             }
                         }
                         
@@ -58,6 +62,7 @@ extension RegistrationPageViewController {
             }
             
         } else {
+            print("haatttaaa...")
         }
     }
 }

@@ -7,12 +7,29 @@
 
 import UIKit
 
-class UsersPostViewCell: UITableViewCell {
+protocol UserPostViewCellProtocol {
+    func showComments(indexPath: IndexPath)
+}
 
+class UsersPostViewCell: UITableViewCell {
+    
+    @IBOutlet var userPPImage: UIImageView!
     @IBOutlet var usersPostImage: UIImageView!
+    @IBOutlet var likeCountLabel: UILabel!
+    @IBOutlet var userNameLabel: UILabel!
+    @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet var userNameLabe: UILabel!
+    
+    var cellProtocol: UserPostViewCellProtocol?
+    var indexPath: IndexPath?
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        usersPostImage.layer.cornerRadius = 10
+        usersPostImage.clipsToBounds = true
+        
+        userPPImage.layer.cornerRadius = 20
+        userPPImage.clipsToBounds = true
         // Initialization code
     }
 
@@ -22,4 +39,7 @@ class UsersPostViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func showComments(_ sender: Any) {
+        cellProtocol?.showComments(indexPath: indexPath!)
+    }
 }
