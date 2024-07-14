@@ -13,14 +13,18 @@ import SDWebImage
 
 class MainPageViewController: UIViewController {
 
-    @IBOutlet var postsList: UITableView!
-    var postArray: [PostModel] = []
+    @IBOutlet private var postsList: UITableView!
+    private var postArray: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
+        
         postsList.delegate = self
         postsList.dataSource = self
+        
+        postsList.rowHeight = UITableView.automaticDimension
+        postsList.estimatedRowHeight = UITableView.automaticDimension
         
         getData()
         
@@ -30,7 +34,7 @@ class MainPageViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
     }
     
-    func getData () {
+    private func getData () {
         let fireStoredb = Firestore.firestore()
         
         // addSnapshotListener dinleyici real time çalışabilmesi adına
@@ -103,7 +107,7 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
             let iconLiked = UIImage(systemName: "heart.fill")
             let iconNonLiked = UIImage(systemName: "heart")
             let firestore = Firestore.firestore()
-            let post = postArray[indexPath.row]
+            var post = postArray[indexPath.row]
             let currentUserId = Auth.auth().currentUser?.uid  // Geçerli kullanıcının ID'sini alın
             
             if let userId = currentUserId {
@@ -156,7 +160,6 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
         // dequeueReusableCell : yeniden kullanılabilen
         // oluştur sonra cast ediyorsun sınıfa sınıftaki şeylere ulaşabilmen adına
         
-        
         let postRow = postArray[indexPath.row]
         let cell = postsList.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! PostViewCell
         let firestore = Firestore.firestore()
@@ -178,7 +181,7 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
             }
         }
             
-            // her bir hücer için protocollerin kullanabilmek için
+            // her bir hücre için protocollerin kullanabilmek için
             cell.cellProtocol = self
             cell.indexPath = indexPath
             
@@ -192,6 +195,8 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
             return cell
         }
         
-        
-        
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
     }

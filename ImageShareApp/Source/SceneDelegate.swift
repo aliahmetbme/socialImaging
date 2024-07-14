@@ -21,15 +21,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        
         var ViewControllerId = ""
         
-        if let auth = Auth.auth().currentUser {
+        if Auth.auth().currentUser != nil {
             
             ViewControllerId = "mainpageviewcontroller"
             
             guard let windowScene = (scene as? UIWindowScene) else { return }
             let window = UIWindow(windowScene: windowScene)
             
-            let storyboard = UIStoryboard(name: "Main", bundle: nil) // Storyboard dosyanızın adını belirtin
-            let initialViewController = storyboard.instantiateViewController(withIdentifier: ViewControllerId) // İlk açılacak ViewController'ın storyboardID'sini belirtin
+            // Storyboard dosyanızın adını belirtin
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            // İlk açılacak ViewController'ın storyboardID'sini belirtin
+            let initialViewController = storyboard.instantiateViewController(withIdentifier: ViewControllerId)
             let navigationController = UINavigationController(rootViewController: initialViewController)
             
             window.rootViewController = navigationController

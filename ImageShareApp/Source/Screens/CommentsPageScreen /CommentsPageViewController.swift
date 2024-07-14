@@ -38,6 +38,7 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
     }
     
     func initialLayoutDesign() {
+        
         ppImage.layer.cornerRadius = 20
         ppImage.clipsToBounds = true
         ppImage.sd_setImage(with: URL(string: curretUserProfilePictureURL!))
@@ -71,8 +72,8 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
             
             fireStore.collection("Post").document(postID ?? "").collection("comments").document("\(documentID)").setData(
                 ["userEmail" : userEmail,
-                 "comment": comment ?? "",
-                 "userPP": curretUserProfilePictureURL ?? "",
+                 "comment": comment!,
+                 "userPP": curretUserProfilePictureURL!,
                  "timestamp" : FieldValue.serverTimestamp()
                 ], merge: true) { error in
                 if let error = error {
@@ -90,8 +91,7 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
     
     func getCommentsFromDB() {
         let fireStore = Firestore.firestore()
-        let currentUserEmail = Auth.auth().currentUser?.email
-        let commentsDocRef = fireStore.collection("Post").document(postID ?? "").collection("comments")
+        let commentsDocRef = fireStore.collection("Post").document(postID!).collection("comments")
 
         commentsDocRef.order(by: "timestamp", descending: true).addSnapshotListener { querySnapshot, error in
             if let snapshot = querySnapshot, !snapshot.isEmpty {
