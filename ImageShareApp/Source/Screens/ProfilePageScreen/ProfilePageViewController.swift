@@ -24,9 +24,8 @@ class ProfilePageViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
         
-        profilepicture.layer.cornerRadius = 50
-        profilepicture.clipsToBounds = true
-                
+        profilepicture.profilePictureDesign()
+                   
         postsTable.delegate = self
         postsTable.dataSource = self
         
@@ -38,11 +37,14 @@ class ProfilePageViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = true
         initialSettings()
+        getUsersPostfromDB()
     }
     
     func initialSettings () {
         if let profilePictureURL = Auth.auth().currentUser?.photoURL?.absoluteString {
             profilepicture.sd_setImage(with: URL(string: profilePictureURL))
+        } else {
+            
         }
         
         if let Name = Auth.auth().currentUser?.displayName {
@@ -156,10 +158,16 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
         cell.usersPostImage.sd_setImage(with: URL(string: postRow.imageUrl ?? ""))
         cell.descriptionLabel.text = postRow.description
         cell.likeCountLabel.text = "\(postRow.likeCount) likes"
-        cell.userPPImage.sd_setImage(with: URL(string: postRow.usersProfileImageUrl ))
+        if (postRow.usersProfileImageUrl != "") {
+            getUserPhotoURL(uid: postRow.usersProfileImageUrl) { usersProfileImageUrl  in
+                if let url = usersProfileImageUrl {
+                    cell.userPPImage.sd_setImage(with: URL(string: url))
+                }
+            }
+        } else {
+            cell.userPPImage.setInitialImages()
+        }       
         cell.userNameLabe.text = postRow.email
-        
-        
         return cell
     }
     

@@ -77,44 +77,22 @@ extension LoginPageViewController {
 
     }
     
-    
     @IBAction func logIn(_ sender: Any) {
         
         serverError.isHidden = true
         incorrectemail.isHidden = true
         incorrectpassword.isHidden = true
-        emailTextfield.layer.borderWidth = 0
-        passwprdTextfield.layer.borderWidth = 0
+        
+        emailTextfield.initialTextFieldDesign()
+        passwprdTextfield.initialTextFieldDesign()
         
         if emailTextfield.text == "" && passwprdTextfield.text == "" {
-            emailTextfield.layer.borderColor = UIColor.red.cgColor
-            emailTextfield.layer.borderWidth = 1
-            
-            passwprdTextfield.layer.borderColor = UIColor.red.cgColor
-            passwprdTextfield.layer.borderWidth = 1
-            
-            incorrectemail.isHidden = false
-            incorrectpassword.isHidden = false
-            
-            incorrectemail.text = "Please enter your email"
-            incorrectpassword.text = "Please enter your password"
-
+            emailTextfield.showErrorMessage(messageLabel: incorrectemail, message: "Please enter your email")
+            passwprdTextfield.showErrorMessage(messageLabel: incorrectpassword, message: "Please enter your password")
         } else if emailTextfield.text == "" {
-            emailTextfield.layer.borderColor = UIColor.red.cgColor
-            emailTextfield.layer.borderWidth = 1
-            
-            incorrectemail.isHidden = false
-
-            incorrectemail.text = "Please enter your email"
-
+            emailTextfield.showErrorMessage(messageLabel: incorrectemail, message: "Please enter your email")
         } else if passwprdTextfield.text == "" {
-            passwprdTextfield.layer.borderColor = UIColor.red.cgColor
-            passwprdTextfield.layer.borderWidth = 1
-            
-            incorrectpassword.isHidden = false
-            
-            incorrectpassword.text = "Please enter your password"
-
+            passwprdTextfield.showErrorMessage(messageLabel: incorrectpassword, message: "Please enter your password")
         } else {
 
             // kayıt için
@@ -134,61 +112,3 @@ extension LoginPageViewController {
         }
     }
 }
-
-
-/*
- serverError.isHidden = true
- incorrectemail.isHidden = true
- incorrectpassword.isHidden = true
- emailTextfield.layer.borderWidth = 0
- passwprdTextfield.layer.borderWidth = 0
- 
- if emailTextfield.text == "" && passwprdTextfield.text == "" {
-     emailTextfield.layer.borderColor = UIColor.red.cgColor
-     emailTextfield.layer.borderWidth = 1
-     
-     passwprdTextfield.layer.borderColor = UIColor.red.cgColor
-     passwprdTextfield.layer.borderWidth = 1
-     
-     incorrectemail.isHidden = false
-     incorrectpassword.isHidden = false
-     
-     incorrectemail.text = "Please enter your email"
-     incorrectpassword.text = "Please enter your password"
-
- } else if emailTextfield.text == "" {
-     emailTextfield.layer.borderColor = UIColor.red.cgColor
-     emailTextfield.layer.borderWidth = 1
-     
-     incorrectemail.isHidden = false
-
-     incorrectemail.text = "Please enter your email"
-
- } else if passwprdTextfield.text == "" {
-     passwprdTextfield.layer.borderColor = UIColor.red.cgColor
-     passwprdTextfield.layer.borderWidth = 1
-     
-     incorrectpassword.isHidden = false
-     
-     incorrectpassword.text = "Please enter your password"
-
- } else {
-
-     // kayıt için
-     Auth.auth().createUser(withEmail: emailTextfield.text!, password: passwprdTextfield.text!) { AuthDataResult, Error in
-         
-         if Error != nil {
-             self.serverError.isHidden = false
-             self.serverError.text = Error?.localizedDescription
-             
-         } else {
-             self.performSegue(withIdentifier: "toFeedVc", sender: nil)
-         }
-
-     }
-     // async sunucuya yolla kullanıcı oluşturur ya da hata döner vb. cevabın ne zaman geleceği belli değil
-     // bu arada kullanıcı işlemlerine devam edebilmesi için async çalışır
-                 
- }
-
- */

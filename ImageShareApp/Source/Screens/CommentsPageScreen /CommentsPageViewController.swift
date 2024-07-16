@@ -26,44 +26,35 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
         getCommentsFromDB()
         initialLayoutDesign()
         
+        ppImage.profilePictureDesign(cornerRadius: 20)
+        ppImage.sd_setImage(with: URL(string: Auth.auth().currentUser?.photoURL?.absoluteString ?? ""))
+        
+        commentsLists.delegate = self
+        commentsLists.dataSource = self
+        
+        addComment.initialTextFieldDesign()
+    }
+    
+    func initialLayoutDesign() {
         navigationController?.navigationBar.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+        ppImage.sd_setImage(with: URL(string: Auth.auth().currentUser?.photoURL?.absoluteString ?? ""))
 
-      
     }
-    
-    func initialLayoutDesign() {
-        
-        ppImage.layer.cornerRadius = 20
-        ppImage.clipsToBounds = true
-        ppImage.sd_setImage(with: URL(string: curretUserProfilePictureURL ?? ""))
-        
-        commentsLists.delegate = self
-        commentsLists.dataSource = self
-        
-        addComment.layer.borderWidth = 1.0 // Kenarlık genişliği
-        addComment.layer.cornerRadius = 20.0
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: addComment.frame.height))
-        addComment.leftView = paddingView
-        addComment.leftViewMode = .always
-        addComment.delegate = self
-        
-        
-        
-    }
-    
     
     
     @IBAction func addComment(_ sender: Any) {
         let fireStore = Firestore.firestore()
         let currentUserEmail = Auth.auth().currentUser?.email
-        let curretUserProfilePictureURL = Auth.auth().currentUser?.photoURL?.absoluteString
+        let curretUserProfilePictureURL = Auth.auth().currentUser?.uid
         let comment = addComment.text
         
         if let userEmail = currentUserEmail {
@@ -84,6 +75,7 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
             }
 
             getCommentsFromDB()
+            addComment.text = ""
             
             
       }
@@ -125,7 +117,7 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
     @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.1) {
             self.view.transform = .identity
-            self.navigationController?.navigationBar.isHidden = false
+            self.navigationController?.navigationBar.isHidden = true
         }
     }
     
@@ -158,9 +150,18 @@ extension CommentsPageViewController: UITableViewDelegate, UITableViewDataSource
 
         cell.commentLabel.text = comment.comment
         cell.username.text = comment.useremail
-        
+
         cell.ppImage.sd_setImage(with: URL(string: comment.imageUrl ?? ""))
-        
+        if (comment.imageUrl != "") {
+            getUserPhotoURL(uid: comment.imageUrl!) { usersProfileImageUrl  in
+                if let url = usersProfileImageUrl {
+                    cell.ppImage.sd_setImage(with: URL(string: url))
+                }
+            }
+        } else {
+            cell.ppImage.setInitialImages()
+        }
+
         return cell
     }
     

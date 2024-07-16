@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 import UIKit
 
 extension UIViewController {
@@ -30,22 +31,41 @@ extension UIViewController {
         }
     }
     
-    func updateUserPhotoURL(downloadURL: URL) {
-        
+    func updateUserPhotoURL(selectedImage: UIImage) {
         guard let user = Auth.auth().currentUser else {
             print("User not logged in")
             return
         }
         
-        let changeRequest = user.createProfileChangeRequest()
-        changeRequest.photoURL = downloadURL
-        changeRequest.commitChanges { error in
-            if let error = error {
-                print("Error updating profile: \(error.localizedDescription)")
-            } else {
-                print("Profile updated successfully")
+        let storage = Storage.storage()
+        
+        if let imageData = selectedImage.jpegData(compressionQuality: 0.5) {
+            let storageRef = storage.reference().child("profile_pictures").child("\(user.uid).jpg")
+            
+            storageRef.putData(imageData, metadata: nil) { metadata, error in
+                if error != nil {
+                    print("Error uploading image: \(error?.localizedDescription ?? "Unknown error")")
+                    return
+                }
+                
+                storageRef.downloadURL { url, error in
+                    if let downloadURL = url {
+                        let changeRequest = user.createProfileChangeRequest()
+                        changeRequest.photoURL = downloadURL
+                        changeRequest.commitChanges { error in
+                            if let error = error {
+                                print("Error updating profile: \(error.localizedDescription)")
+                            } else {
+                                print("Profile updated successfully")
+                            }
+                        }
+                    } else {
+                        print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+                    }
+                }
             }
         }
+
     }
     
     
@@ -64,22 +84,35 @@ extension UIViewController {
         }
     }
     
-    func getUserName(completion: @escaping (String?) -> Void) {
-        if let uid = Auth.auth().currentUser?.uid {
-            let userNameRef = Firestore.firestore().collection("User").document(uid)
-            userNameRef.getDocument { document, error in
-                if let error = error {
-                    print("Error getting document: \(error)")
-                    completion(nil)
-                } else if let document = document, document.exists {
-                    let username = document.get("userName") as? String
-                    completion(username)
-                } else {
-                    completion(nil)
-                }
+    func getUserName(uid: String = Auth.auth().currentUser!.uid, completion: @escaping (String?) -> Void) {
+
+        let userNameRef = Firestore.firestore().collection("User").document(uid)
+        userNameRef.getDocument { document, error in
+            if let error = error {
+                print("Error getting document: \(error)")
+                completion(nil)
+            } else if let document = document, document.exists {
+                let username = document.get("userName") as? String
+                completion(username)
+            } else {
+                completion(nil)
             }
-        } else {
-            completion(nil)
+        }
+    }
+    
+    func getUserPhotoURL(uid: String,completion: @escaping (String?) -> Void) {
+        
+        let storage = Storage.storage()
+        let storageRef = storage.reference().child("profile_pictures").child("\(uid).jpg")
+
+        storageRef.downloadURL { url, error in
+            if let error = error {
+                print("Error fetching photo URL: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            completion(url?.absoluteString)
         }
     }
     

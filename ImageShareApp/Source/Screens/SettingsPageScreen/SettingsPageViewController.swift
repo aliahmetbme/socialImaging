@@ -9,61 +9,39 @@ import UIKit
 import FirebaseAuth
 import FirebaseStorage
 import FirebaseFirestore
+
 class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
     @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var passwordTextField: UITextField!
-    @IBOutlet var emailTextField: UITextField!
     @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var nameTextField: UITextField!
-    var imageURL: URL?
-    
+    var profileImageBuffer: UIImage?
+    @IBOutlet var saveButton: UIButton!
+    let curretUserProfilePictureURL = Auth.auth().currentUser?.photoURL
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        profilePictureDesign()
+        navigationController?.navigationBar.isHidden = true
+        
+        initialDesign()
+        profilePicture.profileSettingsPagePictureDesign(cornerRadius: 75)
         passwordTextField.initialTextFieldDesign()
-        emailTextField.initialTextFieldDesign()
         usernameTextField.initialTextFieldDesign()
         nameTextField.initialTextFieldDesign()
+        saveButton.initialButtonDesign()
 
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
-            profilePicture.image = selectedImage
-            
-            let storage = Storage.storage()
-            
-            // Resmi Firebase Storage'a yükleyin ve URL'yi alın
-            if let imageData = selectedImage.jpegData(compressionQuality: 0.5) {
-                let storageRef = storage.reference().child("profile_pictures").child("\(Auth.auth().currentUser?.uid ?? "default").jpg")
-                
-                storageRef.putData(imageData, metadata: nil) { metadata, error in
-                    if error != nil {
-                        print("Error uploading image: \(error?.localizedDescription ?? "Unknown error")")
-                        return
-                    }
-                    
-                    storageRef.downloadURL { url, error in
-                        if let downloadURL = url {
-                            self.imageURL = url
-                        } else {
-                            print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
-                        }
-                    }
-                }
-            }
+    override func viewWillAppear(_ animated: Bool) {
+        if let profilePictureURL = curretUserProfilePictureURL {
+            profilePicture.sd_setImage(with: profilePictureURL)
+        } else {
+            profilePicture.setInitialImages()
         }
-        
-        self.dismiss(animated: true, completion: nil)
     }
-    
-    func profilePictureDesign() {
-        profilePicture.layer.cornerRadius = 50
-        profilePicture.clipsToBounds = true
-        profilePicture.layer.borderColor = UIColor.gray.cgColor
-        profilePicture.layer.borderWidth = 2
-        profilePicture.layer.shadowOffset = CGSize(width: 5, height: 4)
+       
+    func initialDesign () {
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -71,6 +49,14 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
 
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            profilePicture.image = selectedImage
+            profileImageBuffer = selectedImage
+            self.dismiss(animated: true, completion: nil)
+        }
     }
         
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -87,7 +73,7 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.1) {
             self.view.transform = .identity
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            self.navigationController?.setNavigationBarHidden(true, animated: true)
         }
     }
     
@@ -100,7 +86,7 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-            view.endEditing(true)
+        view.endEditing(true)
 
     }
 
@@ -170,8 +156,9 @@ extension SettingsPageViewController {
             changePassword(newPassword: passwordTextField.text!)
         }
         
-        if let url = imageURL {
-            self.updateUserPhotoURL(downloadURL: url)
+        // change Profile Picture
+        if let profileImageBuffer = profileImageBuffer {
+            self.updateUserPhotoURL(selectedImage: profileImageBuffer)
         }
     }
 }

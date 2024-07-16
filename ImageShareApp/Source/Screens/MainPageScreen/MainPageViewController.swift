@@ -188,7 +188,15 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
             cell.descriptionLabel.text = postRow.description
             cell.usernameDown.text = postRow.email
             cell.usernameUpper.text = postRow.email
-            cell.userpp.sd_setImage(with: URL(string: postRow.usersProfileImageUrl))
+            if (postRow.usersProfileImageUrl != "") {
+                getUserPhotoURL(uid: postRow.usersProfileImageUrl) { usersProfileImageUrl  in
+                    if let url = usersProfileImageUrl {
+                        cell.userpp.sd_setImage(with: URL(string: url))
+                    }
+                }
+            } else {
+                cell.userpp.setInitialImages()
+            }
             cell.postImage.sd_setImage(with: URL(string: postRow.imageUrl ?? ""))
             cell.likeCount.text = "\(postRow.likeCount) likes"
             

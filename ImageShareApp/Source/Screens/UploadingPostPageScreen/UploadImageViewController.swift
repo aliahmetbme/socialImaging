@@ -29,18 +29,14 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         uploadImage.image = initialImage
         //checkIsShouldEnabledUploadButton()
         comment.delegate = self
-             
+        
+        uploadbutton.initialButtonDesign()
+        openCamerabutton.initialButtonDesign(imagePadding: 20)
+        
         uploadImage.layer.cornerRadius = 20
-        uploadbutton.layer.cornerRadius = 15
-        uploadbutton.configuration?.imagePadding = 10
-        openCamerabutton.layer.cornerRadius = 15
-        openCamerabutton.configuration?.imagePadding = 20
-        uploadbutton.clipsToBounds = true
-        openCamerabutton.clipsToBounds = true
-        //comment.layer.cornerRadius = 10
-        comment.leftView =  UIView(frame: CGRect(x: 0, y: 0, width: 10, height: comment.frame.height))
-        comment.leftViewMode = .always
-        comment.clipsToBounds = true
+
+        
+        comment.initialTextFieldDesign()
         
         let gestureRecognizer  = UITapGestureRecognizer(target: self, action: #selector(takeImageFromGallary))
         uploadImage.addGestureRecognizer(gestureRecognizer)
@@ -51,6 +47,10 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
     }
     
     func checkIsShouldEnabledUploadButton () {
@@ -104,10 +104,10 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
             let uuid = UUID().uuidString // Direk uydurma bir id veriyor, farklılaştırma adına
             
             let imageReferance = mediaFolder.child("\(uuid).jpg")
-            var profileImageUrl = ""
+            var profileImageUrl = Auth.auth().currentUser?.uid
             
             
-            if let uid = Auth.auth().currentUser?.uid {
+    /*        if let uid = Auth.auth().currentUser?.uid {
                 let profilePictureReferance = profilePictureFolder.child("\(uid).jpg")
                 
                 profilePictureReferance.downloadURL { url, Error in
@@ -116,7 +116,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                     }
                 }
                 
-            }
+            }*/
                 
             imageReferance.putData(ImageData) { StorageMetadata, error in
                 if error != nil {
@@ -135,7 +135,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
                                 let likeCount = 0
                                 let likes:[String] = []
                                                             
-                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments, "likeCount": likeCount, "userProfileImage": profileImageUrl, "likes":likes ] as [String : Any]
+                                let fireStorePost = ["imageUrl" : ImageUrl, "comment": self.comment.text!, "email" : Auth.auth().currentUser!.email!, "date" : FieldValue.serverTimestamp(), "comments": comments, "likeCount": likeCount, "userProfileImage": profileImageUrl!, "likes":likes ] as [String : Any]
                                                                
                                 fireStoreDataBase.collection("Post").addDocument(data: fireStorePost) { error in
                                     if error != nil {
@@ -199,7 +199,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.1) {
             self.view.transform = .identity
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            self.navigationController?.setNavigationBarHidden(true, animated: true)
         }
     }
     
