@@ -24,7 +24,7 @@ extension UITextField {
         self.layer.cornerRadius = cornerRadius
         
         if traitCollection.userInterfaceStyle == .dark {
-            self.layer.borderColor = UIColor.white.cgColor
+            self.layer.borderColor = UIColor.lightGray.cgColor
         } else {
             self.layer.borderColor = UIColor.gray.cgColor
         }

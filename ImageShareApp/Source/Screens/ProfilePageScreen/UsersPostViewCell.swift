@@ -9,6 +9,7 @@ import UIKit
 
 protocol UserPostViewCellProtocol {
     func showComments(indexPath: IndexPath)
+    func clicked(indexPath: IndexPath)
 }
 
 class UsersPostViewCell: UITableViewCell {
@@ -16,9 +17,10 @@ class UsersPostViewCell: UITableViewCell {
     @IBOutlet var userPPImage: UIImageView!
     @IBOutlet var usersPostImage: UIImageView!
     @IBOutlet var likeCountLabel: UILabel!
-    @IBOutlet var userNameLabel: UILabel!
+    @IBOutlet var userNameUpperLabel: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var userNameLabe: UILabel!
+    @IBOutlet var likeButton: UIButton!
     
     var cellProtocol: UserPostViewCellProtocol?
     var indexPath: IndexPath?
@@ -42,4 +44,9 @@ class UsersPostViewCell: UITableViewCell {
     @IBAction func showComments(_ sender: Any) {
         cellProtocol?.showComments(indexPath: indexPath!)
     }
+    
+    @IBAction func clicked(_ sender: Any) {
+        cellProtocol?.clicked(indexPath: indexPath!)
+    }
+    
 }

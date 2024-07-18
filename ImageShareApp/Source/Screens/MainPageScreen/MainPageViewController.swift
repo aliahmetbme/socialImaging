@@ -18,19 +18,21 @@ class MainPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.isHidden = true
+        getData()
+        initialSettings()
         
         postsList.delegate = self
         postsList.dataSource = self
         
         postsList.rowHeight = UITableView.automaticDimension
         postsList.estimatedRowHeight = UITableView.automaticDimension
-        
-        getData()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        initialSettings()
+    }
+    
+    private func initialSettings () {
         navigationController?.navigationBar.isHidden = true
     }
     
@@ -38,10 +40,8 @@ class MainPageViewController: UIViewController {
         let fireStoredb = Firestore.firestore()
         
         // addSnapshotListener dinleyici real time çalışabilmesi adına
-        
         // .whereField(<#T##field: String##String#>, in: <#T##[Any]#>)
         // filtreleme yapabilmek adına
-        
         // .order(by:"date", descending: true)
         // sıralama yapılır tarihe göre
         
@@ -57,15 +57,20 @@ class MainPageViewController: UIViewController {
                         // documanların özel idleri
                         let documentid = document.documentID
                        // any olarak döndürüyor Stringe çevirememiz lazım
-                        let imageurl = document.get("imageUrl") as? String ?? ""
-                        let email = document.get("email") as? String ?? ""
+                        let postImageurl = document.get("imageUrl") as? String ?? ""
+                        let userUID = document.get("userUID") as? String ?? ""
                         let date = document.get("date") as? String ?? ""
                         let description = document.get("comment") as? String ?? ""
                         let comments = document.get("comments") as? [String] ?? []
                         let likeCount = document.get("likeCount") as? Int ?? 0
-                        let userProfileImageUrl = document.get("userProfileImage") as? String ?? ""
                         
-                        let post = PostModel(email: email, imageUrl: imageurl, description: description, date: date, comments: comments, likeCount: likeCount, usersProfileImageUrl: userProfileImageUrl, postId: documentid)
+                        let post = PostModel(postImageUrl: postImageurl,
+                                         userUID: userUID,
+                                         description: description,
+                                         date: date,
+                                         comments: comments,
+                                         likeCount: likeCount,
+                                         postId: documentid)
                         
                         self.postArray.append(post)
                         
@@ -73,14 +78,13 @@ class MainPageViewController: UIViewController {
                            self.postsList.reloadData() // TableView'i güncelle
                         }
                     }
-                } else {
-                    print("Post Yok")
                 }
             }
         }
     }
 }
 
+// TableView
 extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, PostViewCellProtocol {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -102,9 +106,13 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
     
     func clicked(indexPath: IndexPath) {
         
-        if let cell = postsList.cellForRow(at: indexPath) as? PostViewCell {
-            
-            let iconLiked = UIImage(systemName: "heart.fill")
+        let cell = postsList.cellForRow(at: indexPath) as? PostViewCell
+        
+        setLikedofPosts(cell: cell!, postArray: postArray, indexPath: indexPath, likeButton: cell!.likeButton) {updatedPost in
+            self.postArray[indexPath.row] = updatedPost!
+        }
+                    
+      /*      let iconLiked = UIImage(systemName: "heart.fill")
             let iconNonLiked = UIImage(systemName: "heart")
             let firestore = Firestore.firestore()
             var post = postArray[indexPath.row]
@@ -147,8 +155,8 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
                     // Update the local postArray with the new likeCount
                     self.postArray[indexPath.row] = post
                 }
-            }
-        }
+            } */
+        
     }
     
     
@@ -186,18 +194,23 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
             cell.indexPath = indexPath
             
             cell.descriptionLabel.text = postRow.description
-            cell.usernameDown.text = postRow.email
-            cell.usernameUpper.text = postRow.email
-            if (postRow.usersProfileImageUrl != "") {
-                getUserPhotoURL(uid: postRow.usersProfileImageUrl) { usersProfileImageUrl  in
-                    if let url = usersProfileImageUrl {
-                        cell.userpp.sd_setImage(with: URL(string: url))
-                    }
+        
+            getUserName(uid: postRow.userUID!) { username in
+                if let username = username {
+                    cell.usernameUpper.text = username
+                    cell.usernameDown.text = username
                 }
-            } else {
-                cell.userpp.setInitialImages()
+             }
+                
+            getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl  in
+                if let url = usersProfileImageUrl {
+                    cell.userpp.sd_setImage(with: URL(string: url))
+                } else {
+                    cell.userpp.setInitialImages()
+                }
             }
-            cell.postImage.sd_setImage(with: URL(string: postRow.imageUrl ?? ""))
+            
+            cell.postImage.sd_setImage(with: URL(string: postRow.postImageUrl ?? ""))
             cell.likeCount.text = "\(postRow.likeCount) likes"
             
             return cell

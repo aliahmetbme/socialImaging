@@ -23,32 +23,24 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
-        
         initialDesign()
-        profilePicture.profileSettingsPagePictureDesign(cornerRadius: 75)
-        passwordTextField.initialTextFieldDesign()
-        usernameTextField.initialTextFieldDesign()
-        nameTextField.initialTextFieldDesign()
-        saveButton.initialButtonDesign()
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        initialDesign()
+    }
+       
+    private func initialDesign () {
         if let profilePictureURL = curretUserProfilePictureURL {
             profilePicture.sd_setImage(with: profilePictureURL)
         } else {
             profilePicture.setInitialImages()
         }
-    }
-       
-    func initialDesign () {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
-
+        profilePicture.profileSettingsPagePictureDesign(cornerRadius: 75)
+        passwordTextField.initialTextFieldDesign()
+        usernameTextField.initialTextFieldDesign()
+        nameTextField.initialTextFieldDesign()
+        saveButton.initialButtonDesign()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -58,38 +50,6 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
             self.dismiss(animated: true, completion: nil)
         }
     }
-        
-    @objc func keyboardWillShow(_ notification: Notification) {
-       guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardHeight = keyboardFrame.height / (self.view.frame.size.height * 0.003)
-                
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-            self.navigationController?.navigationBar.isHidden = true
-        }
-        
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = .identity
-            self.navigationController?.setNavigationBarHidden(true, animated: true)
-        }
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        view.endEditing(true)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        view.endEditing(true)
-
-    }
-
 }
 
 
@@ -97,11 +57,11 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
 extension SettingsPageViewController {
     
     
-    @IBAction func turnBackProfilePage(_ sender: Any) {
+    @IBAction private func turnBackProfilePage(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func takeImage(_ sender: Any) {
+    @IBAction private func takeImage(_ sender: Any) {
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let pickerController = UIImagePickerController()
@@ -131,9 +91,7 @@ extension SettingsPageViewController {
         
     }
     
-    @IBAction func saveChanges () {
-        
-        print("deneme")
+    @IBAction private func saveChanges () {
         
         // change name
         if (nameTextField.text != ""){

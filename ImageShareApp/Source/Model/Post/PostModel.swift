@@ -9,13 +9,37 @@ import Foundation
 
 struct PostModel {
     
-    let  email: String?
-    let  imageUrl: String?
+    let  postImageUrl: String?
+    let  userUID: String?
     let  description: String?
     let  date: String?
     let  comments: [String]
     var  likeCount: Int
-    let  usersProfileImageUrl: String
     let  postId: String
 
 }
+
+struct PostUploadModel {
+    let  imageUrl: String?
+    let  userUID: String?
+    let  comment: String?
+    let  date: Any?
+    let  comments: [String]?
+    var  likeCount: Int?
+    var  likes: [String]?
+    
+    
+    func toDictionary() -> [String: Any] {
+        return [
+            "imageUrl": imageUrl!,
+            "userUID": userUID!,
+            "comment": comment!,
+            "date": date!,
+            "comments": comments!,
+            "likeCount": likeCount!,
+            "likes": likes!
+        ]
+    }
+}
+
+

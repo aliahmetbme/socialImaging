@@ -20,68 +20,27 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var commentsLists: UITableView!
     @IBOutlet var addCommentButton: UIButton!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        getCommentsFromDB()
-        initialLayoutDesign()
-        
-        ppImage.profilePictureDesign(cornerRadius: 20)
-        ppImage.sd_setImage(with: URL(string: Auth.auth().currentUser?.photoURL?.absoluteString ?? ""))
-        
         commentsLists.delegate = self
         commentsLists.dataSource = self
-        
-        addComment.initialTextFieldDesign()
+        initialLayoutDesign()
+        getCommentsFromDB()
     }
     
-    func initialLayoutDesign() {
+    private func initialLayoutDesign() {
         navigationController?.navigationBar.isHidden = true
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
+        ppImage.initialPictureDesign(cornerRadius: 20)
+        addComment.initialTextFieldDesign(cornerRadius:20)
+        ppImage.sd_setImage(with: URL(string: Auth.auth().currentUser?.photoURL?.absoluteString ?? ""))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = true
-        ppImage.sd_setImage(with: URL(string: Auth.auth().currentUser?.photoURL?.absoluteString ?? ""))
-
+        initialLayoutDesign()
     }
     
-    
-    @IBAction func addComment(_ sender: Any) {
-        let fireStore = Firestore.firestore()
-        let currentUserEmail = Auth.auth().currentUser?.email
-        let curretUserProfilePictureURL = Auth.auth().currentUser?.uid
-        let comment = addComment.text
-        
-        if let userEmail = currentUserEmail {
-            
-            let documentID = UUID().uuidString
-            
-            fireStore.collection("Post").document(postID ?? "").collection("comments").document("\(documentID)").setData(
-                ["userEmail" : userEmail,
-                 "comment": comment!,
-                 "userPP": curretUserProfilePictureURL!,
-                 "timestamp" : FieldValue.serverTimestamp()
-                ], merge: true) { error in
-                if let error = error {
-                    print("Error adding comment: \(error)")
-                } else {
-                    print("Comment successfully added!")
-                }
-            }
-
-            getCommentsFromDB()
-            addComment.text = ""
-            
-            
-      }
-    }
-    
-    func getCommentsFromDB() {
+    private func getCommentsFromDB() {
         let fireStore = Firestore.firestore()
         let commentsDocRef = fireStore.collection("Post").document(postID!).collection("comments")
 
@@ -89,11 +48,11 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
             if let snapshot = querySnapshot, !snapshot.isEmpty {
                 self.commentsList.removeAll() // Eski yorumları temizle
                 for document in snapshot.documents {
-                    let userEmail = document.get("userEmail") as? String
-                    let imageUrl = document.get("userPP") as? String
+                    let username = document.get("username") as? String
+                    let userUID = document.get("userUID") as? String
                     let comment = document.get("comment") as? String
                     
-                    let commentObj = CommentModel(imageUrl: imageUrl, useremail: userEmail, comment: comment)
+                    let commentObj = CommentModel(userUID: userUID, userName: username, comment: comment)
                     self.commentsList.append(commentObj)
                 }
                 DispatchQueue.main.async {
@@ -102,40 +61,29 @@ class CommentsPageViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
-    
-    @objc func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardHeight = keyboardFrame.height 
-                
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-            self.navigationController?.navigationBar.isHidden = true
-        }
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = .identity
-            self.navigationController?.navigationBar.isHidden = true
-        }
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        view.endEditing(true)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-            view.endEditing(true)
-
-    }
-    
 }
 
+// Actions
+extension CommentsPageViewController {
+    @IBAction private  func addComment(_ sender: Any) {
+        let fireStore = Firestore.firestore()
+        let currenUserUID = Auth.auth().currentUser?.uid
+        let comment = addComment.text!
+        let commentID = UUID().uuidString
+
+        getUserName(uid: currenUserUID!) { userName in
+            if let username = userName {
+                let data = UploadCommentModel(userUID: currenUserUID, username: username, comment: comment, timestamp: FieldValue.serverTimestamp()).toDictionary()
+                fireStore.collection("Post").document(self.postID!).collection("comments").document("\(commentID)").setData(data)
+            }
+        }
+               
+        getCommentsFromDB()
+        addComment.text = ""
+    }
+}
+
+// Table View
 extension CommentsPageViewController: UITableViewDelegate, UITableViewDataSource  {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -147,21 +95,16 @@ extension CommentsPageViewController: UITableViewDelegate, UITableViewDataSource
         let comment = commentsList[indexPath.row]
         let cell = commentsLists.dequeueReusableCell(withIdentifier: "commentcell", for: indexPath) as! CommentViewCell
         
-
         cell.commentLabel.text = comment.comment
-        cell.username.text = comment.useremail
-
-        cell.ppImage.sd_setImage(with: URL(string: comment.imageUrl ?? ""))
-        if (comment.imageUrl != "") {
-            getUserPhotoURL(uid: comment.imageUrl!) { usersProfileImageUrl  in
-                if let url = usersProfileImageUrl {
-                    cell.ppImage.sd_setImage(with: URL(string: url))
-                }
+        cell.username.text = comment.userName
+        
+        getUserPhotoURL(uid: comment.userUID!) { usersProfileImageUrl  in
+            if let url = usersProfileImageUrl {
+                cell.ppImage.sd_setImage(with: URL(string: url))
+            } else {
+                cell.ppImage.setInitialImages()
             }
-        } else {
-            cell.ppImage.setInitialImages()
         }
-
         return cell
     }
     

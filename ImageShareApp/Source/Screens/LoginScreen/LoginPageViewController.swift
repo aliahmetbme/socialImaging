@@ -10,63 +10,32 @@ import Firebase
 import FirebaseAuth
 
 class LoginPageViewController: UIViewController {
-
+    
     @IBOutlet var serverError: UILabel!
     @IBOutlet var incorrectpassword: UILabel!
     @IBOutlet var incorrectemail: UILabel!
     @IBOutlet var emailTextfield: UITextField!
     @IBOutlet var passwprdTextfield: UITextField!
+    @IBOutlet var loginButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         navigationController?.navigationBar.isHidden = true
+        initialDesign()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        initialDesign()
+    }
+    
+    func initialDesign () {
+        emailTextfield.initialTextFieldDesign(cornerRadius:25)
+        passwprdTextfield.initialTextFieldDesign(cornerRadius:25)
+        loginButton.initialButtonDesign()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
-
-        emailTextfield.initialTextFieldDesign()        
-        passwprdTextfield.initialTextFieldDesign()
-
+        incorrectemail.isHidden = true
+        incorrectpassword.isHidden = true
     }
-
-    
-    
-    
-    @objc func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardHeight = keyboardFrame.height / (self.view.frame.size.height * 0.01)
-                
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-            self.navigationController?.navigationBar.isHidden = true
-        }
-    }
-
-    @objc func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1) {
-            self.view.transform = .identity
-        }
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        view.endEditing(true)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        view.endEditing(true)
-
-    }
-    
 }
 
 // Actions
@@ -78,37 +47,54 @@ extension LoginPageViewController {
     }
     
     @IBAction func logIn(_ sender: Any) {
+        initialDesign()
         
-        serverError.isHidden = true
-        incorrectemail.isHidden = true
-        incorrectpassword.isHidden = true
-        
-        emailTextfield.initialTextFieldDesign()
-        passwprdTextfield.initialTextFieldDesign()
-        
-        if emailTextfield.text == "" && passwprdTextfield.text == "" {
-            emailTextfield.showErrorMessage(messageLabel: incorrectemail, message: "Please enter your email")
-            passwprdTextfield.showErrorMessage(messageLabel: incorrectpassword, message: "Please enter your password")
-        } else if emailTextfield.text == "" {
-            emailTextfield.showErrorMessage(messageLabel: incorrectemail, message: "Please enter your email")
-        } else if passwprdTextfield.text == "" {
-            passwprdTextfield.showErrorMessage(messageLabel: incorrectpassword, message: "Please enter your password")
+        if emailTextfield.text == "" || passwprdTextfield.text == "" {
+            
+            showNullError(input: emailTextfield, message: incorrectemail)
+            showNullError(input: passwprdTextfield, message: incorrectpassword)
+            
         } else {
-
-            // kayıt için
+        
             Auth.auth().signIn(withEmail: emailTextfield.text!, password: passwprdTextfield.text!, completion: { AuthDataResult, Error in
-                
                 if Error != nil {
-                    self.serverError.isHidden = false
-                    self.serverError.text = Error?.localizedDescription
+                    let ErrorMessage = Error!.localizedDescription
                     
+                    if (ErrorMessage == AuthError.invalidEmail.rawValue) {
+                        self.showError(input: self.emailTextfield, messageLabel: self.incorrectemail, message: ErrorMessage)
+                    } else if (ErrorMessage == AuthError.invalidPassword.rawValue) {
+                        self.showError(input: self.passwprdTextfield, messageLabel: self.incorrectpassword, message: ErrorMessage)
+                    } else {
+                        self.showError(input: self.emailTextfield, messageLabel: self.incorrectemail, message: ErrorMessage)
+                        self.showError(input: self.passwprdTextfield, messageLabel: self.incorrectpassword, message: ErrorMessage)
+                    }
                 } else {
                     self.performSegue(withIdentifier: "toFeedVc", sender: nil)
                 }
-
             })
             // async sunucuya yolla kullanıcı oluşturur ya da hata döner vb. cevabın ne zaman geleceği belli değil
             // bu arada kullanıcı işlemlerine devam edebilmesi için async çalışır
         }
     }
+    
+    @IBAction func googleSignIn(_ sender: Any) {
+        signInGoogle { result in
+            if (result) {
+                // kullanıcı giriş yapmayı başarmışsa gerçek bir mail adresi vardır
+                if let uid = Auth.auth().currentUser?.uid , let email = Auth.auth().currentUser?.email {
+                    Firestore.firestore().collection("User").document(uid).setData(["userName": email.components(separatedBy: "@").first! ])
+                    { error
+                        in if error != nil {
+                            print(error?.localizedDescription as Any)
+                            self.emailTextfield.showErrorMessage(messageLabel: self.incorrectemail, message: error!.localizedDescription)
+                            self.passwprdTextfield.showErrorMessage(messageLabel: self.incorrectpassword, message: error!.localizedDescription)
+                        } else {
+                            self.performSegue(withIdentifier: "toFeedVc", sender: nil)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
 }

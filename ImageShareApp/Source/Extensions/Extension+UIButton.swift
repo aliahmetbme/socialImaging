@@ -12,7 +12,11 @@ extension UIButton {
     
     func initialButtonDesign(cornerRadius: CGFloat = 25, imagePadding: CGFloat = 10) {
         self.layer.cornerRadius = cornerRadius
-        self.configuration?.imagePadding = imagePadding
+        if #available(iOS 15.0, *) {
+            self.configuration?.imagePadding = imagePadding
+        } else {
+            // Fallback on earlier versions
+        }
         self.clipsToBounds = true
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 
 extension UIImageView {
     
-    func profilePictureDesign(cornerRadius: CGFloat = 50) {
+    func initialPictureDesign(cornerRadius: CGFloat = 50) {
         
         self.layer.cornerRadius = cornerRadius
         self.clipsToBounds = true
