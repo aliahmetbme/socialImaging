@@ -135,6 +135,7 @@ extension UploadImageViewController {
                                     } else {
                                         self.showErrorMessage(title: "Congrulation", message: "Successful")
                                         self.initialSettings()
+                                        self.checkIsShouldEnabledUploadButton()
                                     }
                                 }
                             }

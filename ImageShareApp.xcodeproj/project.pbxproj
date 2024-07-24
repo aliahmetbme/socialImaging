@@ -45,12 +45,16 @@
 		FE0061A22C286ACC00C77E3A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FE0061A12C286ACC00C77E3A /* GoogleService-Info.plist */; };
 		FE029F892C449D6C00C46DDC /* Extension+UITextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE029F882C449D6C00C46DDC /* Extension+UITextfield.swift */; };
 		FE0E2EB22C2F6980002E3F98 /* UsersPostViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0E2EB12C2F6980002E3F98 /* UsersPostViewCell.swift */; };
+		FE1E1D152C500E9700EE58D4 /* FireBaseDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E1D142C500E9700EE58D4 /* FireBaseDBService.swift */; };
+		FE1E1D172C5012B400EE58D4 /* DBEndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E1D162C5012B400EE58D4 /* DBEndPoints.swift */; };
 		FE2EFF282C28873D00AE84E6 /* MainPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2EFF272C28873D00AE84E6 /* MainPageViewController.swift */; };
 		FE2EFF2A2C28877E00AE84E6 /* UploadImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2EFF292C28877E00AE84E6 /* UploadImageViewController.swift */; };
 		FE2EFF2C2C28879100AE84E6 /* ProfilePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2EFF2B2C28879100AE84E6 /* ProfilePageViewController.swift */; };
 		FE32F6482C2A319E00945627 /* PostViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE32F6472C2A319E00945627 /* PostViewCell.swift */; };
 		FE3518132C455624008745BF /* Extension+UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3518122C455624008745BF /* Extension+UIButton.swift */; };
 		FE52D7612C2C9B6000B8FC5B /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE52D7602C2C9B6000B8FC5B /* SettingsPageViewController.swift */; };
+		FE64A40E2C4FF3FA0069D5AF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */; };
+		FE64A4102C4FF5270069D5AF /* FireBaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64A40F2C4FF5270069D5AF /* FireBaseAuthService.swift */; };
 		FE791CB12C4303EF0021B0AB /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB02C4303EF0021B0AB /* UserModel.swift */; };
 		FE791CB62C4338F70021B0AB /* RegistrationPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB52C4338F70021B0AB /* RegistrationPageViewController.swift */; };
 		FE791CB82C4339390021B0AB /* Extension+UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB72C4339390021B0AB /* Extension+UIImageView.swift */; };
@@ -80,12 +84,16 @@
 		FE0061A12C286ACC00C77E3A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FE029F882C449D6C00C46DDC /* Extension+UITextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UITextfield.swift"; sourceTree = "<group>"; };
 		FE0E2EB12C2F6980002E3F98 /* UsersPostViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersPostViewCell.swift; sourceTree = "<group>"; };
+		FE1E1D142C500E9700EE58D4 /* FireBaseDBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseDBService.swift; sourceTree = "<group>"; };
+		FE1E1D162C5012B400EE58D4 /* DBEndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBEndPoints.swift; sourceTree = "<group>"; };
 		FE2EFF272C28873D00AE84E6 /* MainPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPageViewController.swift; sourceTree = "<group>"; };
 		FE2EFF292C28877E00AE84E6 /* UploadImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImageViewController.swift; sourceTree = "<group>"; };
 		FE2EFF2B2C28879100AE84E6 /* ProfilePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePageViewController.swift; sourceTree = "<group>"; };
 		FE32F6472C2A319E00945627 /* PostViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewCell.swift; sourceTree = "<group>"; };
 		FE3518122C455624008745BF /* Extension+UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIButton.swift"; sourceTree = "<group>"; };
 		FE52D7602C2C9B6000B8FC5B /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
+		FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		FE64A40F2C4FF5270069D5AF /* FireBaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseAuthService.swift; sourceTree = "<group>"; };
 		FE791CB02C4303EF0021B0AB /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		FE791CB52C4338F70021B0AB /* RegistrationPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPageViewController.swift; sourceTree = "<group>"; };
 		FE791CB72C4339390021B0AB /* Extension+UIImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIImageView.swift"; sourceTree = "<group>"; };
@@ -183,6 +191,33 @@
 				FE0061622C2865CE00C77E3A /* Info.plist */,
 			);
 			path = ImageShareApp;
+			sourceTree = "<group>";
+		};
+		FE64A40A2C4FF3950069D5AF /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				FE64A40C2C4FF3E20069D5AF /* Services */,
+				FE64A40B2C4FF3D30069D5AF /* Network */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		FE64A40B2C4FF3D30069D5AF /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */,
+				FE1E1D162C5012B400EE58D4 /* DBEndPoints.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		FE64A40C2C4FF3E20069D5AF /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FE64A40F2C4FF5270069D5AF /* FireBaseAuthService.swift */,
+				FE1E1D142C500E9700EE58D4 /* FireBaseDBService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		FE791CA12C43006B0021B0AB /* Model */ = {
@@ -309,6 +344,7 @@
 		FE791CB32C43044C0021B0AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				FE64A40A2C4FF3950069D5AF /* Helper */,
 				FE0061562C2865CC00C77E3A /* SceneDelegate.swift */,
 				FE0061542C2865CC00C77E3A /* AppDelegate.swift */,
 				FE791CB42C4304820021B0AB /* Resource */,
@@ -483,14 +519,18 @@
 				FE029F892C449D6C00C46DDC /* Extension+UITextfield.swift in Sources */,
 				FE791CB82C4339390021B0AB /* Extension+UIImageView.swift in Sources */,
 				FE8F98F32C2B97DF002858F9 /* CommentViewCell.swift in Sources */,
+				FE1E1D172C5012B400EE58D4 /* DBEndPoints.swift in Sources */,
 				FEA313F12C44511300DD2F90 /* Extension+FirebaseAuth.swift in Sources */,
 				FECC97DD2C2F43F7008ACA44 /* CommentModel.swift in Sources */,
 				FE791CB62C4338F70021B0AB /* RegistrationPageViewController.swift in Sources */,
 				FE791CBA2C434ADB0021B0AB /* Extension+UIViewController.swift in Sources */,
+				FE1E1D152C500E9700EE58D4 /* FireBaseDBService.swift in Sources */,
 				FE52D7612C2C9B6000B8FC5B /* SettingsPageViewController.swift in Sources */,
 				FE32F6482C2A319E00945627 /* PostViewCell.swift in Sources */,
 				FE83E9072C486C10007C54C6 /* Enums.swift in Sources */,
 				FE83E9092C48909D007C54C6 /* Extension+FirebaseDB.swift in Sources */,
+				FE64A40E2C4FF3FA0069D5AF /* NetworkManager.swift in Sources */,
+				FE64A4102C4FF5270069D5AF /* FireBaseAuthService.swift in Sources */,
 				FE3518132C455624008745BF /* Extension+UIButton.swift in Sources */,
 				FEECA2062C2A42710048D017 /* PostModel.swift in Sources */,
 				FE2EFF282C28873D00AE84E6 /* MainPageViewController.swift in Sources */,

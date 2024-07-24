@@ -18,27 +18,26 @@ class ProfilePageViewController: UIViewController {
     @IBOutlet var profilepicture: UIImageView!
     @IBOutlet var usernameLabel: UILabel!
     
+    let firebaseAuhtService = FireBaseAuthService()
+    let firebaseDBService = FireBaseDBService()
+
     var postArray: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        profilepicture.initialPictureDesign()
-        getUsersPostfromDB()
         initialSettings()
-        
-        postsTable.delegate = self
-        postsTable.dataSource = self
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         initialSettings()
-        getUsersPostfromDB()
     }
     
     private func initialSettings () {
         navigationController?.navigationBar.isHidden = true
-
+        profilepicture.initialPictureDesign()
+        postsTable.delegate = self
+        postsTable.dataSource = self
+        
         if let profilePictureURL = Auth.auth().currentUser?.photoURL {
             profilepicture.sd_setImage(with: profilePictureURL)
         } else {
@@ -48,52 +47,16 @@ class ProfilePageViewController: UIViewController {
         if let Name = Auth.auth().currentUser?.displayName {
             nameLabel.text = Name
         }
-        
-        getUserName { userName in
+        // getting UserName
+        firebaseAuhtService.getUserName { userName in
             if let username = userName {
                 self.usernameLabel.text = "@\(username)"
             }
         }
-    }
-    
-    private func getUsersPostfromDB () {
-        
-        let fireStoredb = Firestore.firestore()
-        let userUID = Auth.auth().currentUser?.uid
-        
-        fireStoredb.collection("Post").whereField("userUID", isEqualTo: userUID as Any).order(by:"date", descending: true).addSnapshotListener { querySnapshot, error in
-            if error != nil {
-                print("Veri alınamadı: \(String(describing: error?.localizedDescription))")
-                self.postCount.text = "\(self.postArray.count)"
-                return
-            } else {
-                if let snapshot = querySnapshot, !snapshot.isEmpty {
-                    self.postArray.removeAll()
-
-                    for document in snapshot.documents {
-                        // documanların özel idleri
-                        let documentid = document.documentID
-                        let postImageUrl = document.get("imageUrl") as? String ?? ""
-                        let userUID = document.get("userUID") as? String ?? ""
-                        let date = document.get("date") as? String ?? ""
-                        let description = document.get("comment") as? String ?? ""
-                        let comments = document.get("comments") as? [String] ?? []
-                        let likeCount = document.get("likeCount") as? Int ?? 0
-                       
-                        let post = PostModel(postImageUrl: postImageUrl, userUID: userUID ,description: description, date: date, comments: comments, likeCount: likeCount, postId: documentid)
-                        
-                        self.postArray.append(post)
-                        
-                        DispatchQueue.main.async {
-                            self.postsTable.reloadData()
-                        }  
-                    }
-                    self.postCount.text = "\(self.postArray.count)"
-
-                } else {
-                    print("Post Yok")
-                }
-            }
+        // getting Posts
+        firebaseDBService.getPosts(tableView: postsTable, filterField: DBEndPoints.userUID.endPointsString) { postData in
+            self.postArray = postData
+            self.postCount.text = "\(postData.count)"
         }
     }
 }
@@ -121,8 +84,9 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
     func clicked(indexPath: IndexPath) {
         let cell = postsTable.cellForRow(at: indexPath) as? UsersPostViewCell
         
-        setLikedofPosts(cell: cell!, postArray: postArray, indexPath: indexPath, likeButton: cell!.likeButton) { updatedPost in
+        firebaseDBService.setLikedofPosts( post: postArray[indexPath.row], likeButton: cell!.likeButton) { updatedPost in
             self.postArray[indexPath.row] = updatedPost!
+            self.postsTable.reloadData()
         }
     }
     
@@ -151,43 +115,34 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postRow = postArray[indexPath.row]
-        let firestore = Firestore.firestore()
-        let currentUserId = Auth.auth().currentUser?.uid  // Geçerli kullanıcının ID'sini alın
+        let cell = postsTable.dequeueReusableCell(withIdentifier: "usersPostCell", for: indexPath) as! UsersPostViewCell
         let iconLiked = UIImage(systemName: "heart.fill")
         let iconNonLiked = UIImage(systemName: "heart")
-        
-        let cell = postsTable.dequeueReusableCell(withIdentifier: "usersPostCell", for: indexPath) as! UsersPostViewCell
-        
+                
         cell.cellProtocol = self
         cell.indexPath = indexPath
-                
-        if let userId = Auth.auth().currentUser?.uid {
-            // Kullanıcının bu postu beğenip beğenmediğini kontrol et
-            let likeDocRef = firestore.collection("Post").document(postRow.postId).collection("likes").document(userId)
-            
-            likeDocRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    cell.likeButton.setImage(iconLiked, for: .normal)
-                } else {
-                    cell.likeButton.setImage(iconNonLiked, for: .normal)
-
-                }
+        
+        firebaseDBService.isPostLiked(postRow: postRow) { isLiked in
+            if (isLiked) {
+                cell.likeButton.setImage(iconLiked, for: .normal)
+            } else {
+                cell.likeButton.setImage(iconNonLiked, for: .normal)
             }
         }
-
+                
         cell.usersPostImage.sd_setImage(with: URL(string: postRow.postImageUrl ?? ""))
         cell.descriptionLabel.text = postRow.description
         cell.likeCountLabel.text = "\(postRow.likeCount) likes"
         
     
-        getUserName(uid: postRow.userUID!) { username in
+        firebaseAuhtService.getUserName(uid: postRow.userUID!) { username in
             if let username = username {
                 cell.userNameLabe.text = "\(username)"
                 cell.userNameUpperLabel.text = "\(username)"
             }
         }
         
-        getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl  in
+        firebaseAuhtService.getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl  in
             if let url = usersProfileImageUrl {
                 cell.userPPImage.sd_setImage(with: URL(string: url))
             } else {

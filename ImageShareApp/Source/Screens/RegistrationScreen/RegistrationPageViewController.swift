@@ -24,6 +24,7 @@ class RegistrationPageViewController: UIViewController {
     @IBOutlet private var userNameLabel: UILabel!
     @IBOutlet private var passwordErrorLabel: UILabel!
     @IBOutlet private var repasswordErrorLabel: UILabel!
+    let firebaseAuthService = FireBaseAuthService()
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,11 +90,11 @@ extension RegistrationPageViewController {
                         
                     } else {
                         // setting Name
-                        self.updateDisplayName(newDisplayName: self.nameTextField.text!)
+                        self.firebaseAuthService.updateDisplayName(newDisplayName: self.nameTextField.text!)
                         
                         // setting username via path users uid
                         if let uid = authDataResult?.user.uid  {
-                            Firestore.firestore().collection("User").document(uid).setData(["userName":self.userNameTextField.text!]) {
+                            Firestore.firestore().collection(DBEndPoints.User.endPointsString).document(uid).setData([DBEndPoints.username.endPointsString :self.userNameTextField.text!]) {
                                 error in if error != nil {
                                     self.showError(input: self.emailTextField)
                                     self.showError(input: self.nameTextField)

@@ -17,6 +17,7 @@ class LoginPageViewController: UIViewController {
     @IBOutlet var emailTextfield: UITextField!
     @IBOutlet var passwprdTextfield: UITextField!
     @IBOutlet var loginButton: UIButton!
+    let firebaseAuthService = FireBaseAuthService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,8 +56,10 @@ extension LoginPageViewController {
             showNullError(input: passwprdTextfield, message: incorrectpassword)
             
         } else {
-        
-            Auth.auth().signIn(withEmail: emailTextfield.text!, password: passwprdTextfield.text!, completion: { AuthDataResult, Error in
+            
+            let user = LoginUser(email: emailTextfield.text!, password: passwprdTextfield.text!)
+            
+            firebaseAuthService.signIn(user: user) { AuthDataResult, Error in
                 if Error != nil {
                     let ErrorMessage = Error!.localizedDescription
                     
@@ -71,18 +74,22 @@ extension LoginPageViewController {
                 } else {
                     self.performSegue(withIdentifier: "toFeedVc", sender: nil)
                 }
-            })
+                
+            }
+
             // async sunucuya yolla kullanıcı oluşturur ya da hata döner vb. cevabın ne zaman geleceği belli değil
             // bu arada kullanıcı işlemlerine devam edebilmesi için async çalışır
         }
     }
     
     @IBAction func googleSignIn(_ sender: Any) {
-        signInGoogle { result in
+        firebaseAuthService.signInGoogle(viewController: self) { result in
+            print(result)
             if (result) {
                 // kullanıcı giriş yapmayı başarmışsa gerçek bir mail adresi vardır
+                print("DBEndPoints.username.endPointsString \(DBEndPoints.username.endPointsString)")
                 if let uid = Auth.auth().currentUser?.uid , let email = Auth.auth().currentUser?.email {
-                    Firestore.firestore().collection("User").document(uid).setData(["userName": email.components(separatedBy: "@").first! ])
+                    Firestore.firestore().collection(DBEndPoints.User.endPointsString).document(uid).setData([DBEndPoints.username.endPointsString: email.components(separatedBy: "@").first! ])
                     { error
                         in if error != nil {
                             print(error?.localizedDescription as Any)

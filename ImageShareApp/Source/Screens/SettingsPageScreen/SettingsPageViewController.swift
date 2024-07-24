@@ -19,7 +19,8 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
     var profileImageBuffer: UIImage?
     @IBOutlet var saveButton: UIButton!
     let curretUserProfilePictureURL = Auth.auth().currentUser?.photoURL
-
+    let firebaseAuthService = FireBaseAuthService()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
@@ -95,7 +96,7 @@ extension SettingsPageViewController {
         
         // change name
         if (nameTextField.text != ""){
-            updateDisplayName(newDisplayName: nameTextField.text!)
+            firebaseAuthService.updateDisplayName(newDisplayName: nameTextField.text!)
         }
         
         // change user name
@@ -111,12 +112,12 @@ extension SettingsPageViewController {
         
         // change password
         if (passwordTextField.text != "") {
-            changePassword(newPassword: passwordTextField.text!)
+            firebaseAuthService.changePassword(newPassword: passwordTextField.text!)
         }
         
         // change Profile Picture
         if let profileImageBuffer = profileImageBuffer {
-            self.updateUserPhotoURL(selectedImage: profileImageBuffer)
+            firebaseAuthService.updateUserPhotoURL(selectedImage: profileImageBuffer)
         }
     }
 }
