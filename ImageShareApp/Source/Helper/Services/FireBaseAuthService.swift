@@ -199,7 +199,7 @@ class FireBaseAuthService: UIViewController {
         let storageRef = storage.reference().child("profile_pictures").child("\(uid).jpg")
         
         storageRef.downloadURL { url, error in
-            if let error = error {
+            if error != nil {
                 completion(nil)
                 return
             }

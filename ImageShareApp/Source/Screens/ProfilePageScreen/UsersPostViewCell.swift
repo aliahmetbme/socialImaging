@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 protocol UserPostViewCellProtocol {
     func showComments(indexPath: IndexPath)
@@ -29,6 +30,12 @@ class UsersPostViewCell: UITableViewCell {
         super.awakeFromNib()
         usersPostImage.layer.cornerRadius = 10
         usersPostImage.clipsToBounds = true
+        
+        usersPostImage.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(30)  // Soldan 30 px padding
+            make.trailing.equalToSuperview().inset(30)  // Sağdan 30 px padding
+            make.height.equalTo(usersPostImage.snp.width)
+        }
         
         userPPImage.layer.cornerRadius = 20
         userPPImage.clipsToBounds = true

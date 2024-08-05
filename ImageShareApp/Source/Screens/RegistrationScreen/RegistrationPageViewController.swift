@@ -94,7 +94,7 @@ extension RegistrationPageViewController {
                         
                         // setting username via path users uid
                         if let uid = authDataResult?.user.uid  {
-                            Firestore.firestore().collection(DBEndPoints.User.endPointsString).document(uid).setData([DBEndPoints.username.endPointsString :self.userNameTextField.text!]) {
+                            Firestore.firestore().collection(DBEndPoints.User.endPointsString).document(uid).setData([DBEndPoints.userName.endPointsString :self.userNameTextField.text!]) {
                                 error in if error != nil {
                                     self.showError(input: self.emailTextField)
                                     self.showError(input: self.nameTextField)

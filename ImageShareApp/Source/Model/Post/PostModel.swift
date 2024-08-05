@@ -24,9 +24,7 @@ struct PostUploadModel {
     let  userUID: String?
     let  comment: String?
     let  date: Any?
-    let  comments: [String]?
     var  likeCount: Int?
-    var  likes: [String]?
     
     
     func toDictionary() -> [String: Any] {
@@ -35,9 +33,7 @@ struct PostUploadModel {
             "userUID": userUID!,
             "comment": comment!,
             "date": date!,
-            "comments": comments!,
             "likeCount": likeCount!,
-            "likes": likes!
         ]
     }
 }

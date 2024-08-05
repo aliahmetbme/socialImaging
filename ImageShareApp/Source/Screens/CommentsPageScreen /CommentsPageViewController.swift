@@ -64,7 +64,6 @@ extension CommentsPageViewController {
         firebaseAuthService.getUserName(uid: currenUserUID!) { userName in
             if let username = userName {
                 let data = UploadCommentModel(userUID: currenUserUID, username: username, comment: comment, timestamp: FieldValue.serverTimestamp()).toDictionary()
-                print(data)
                 fireStore.collection("Post").document(self.postID!).collection("comments").document("\(commentID)").setData(data)
             }
         }
@@ -86,7 +85,6 @@ extension CommentsPageViewController: UITableViewDelegate, UITableViewDataSource
         
         cell.commentLabel.text = comment.comment
         cell.username.text = comment.userName
-        print("comment: \(comment)")
         
         firebaseAuthService.getUserPhotoURL(uid: comment.userUID ?? "") { usersProfileImageUrl  in
             if let url = usersProfileImageUrl {

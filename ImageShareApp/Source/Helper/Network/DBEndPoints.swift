@@ -30,7 +30,7 @@ enum DBEndPoints {
             return "User"
         case .media:
             return "media"
-        case .uuidjpg(uuid: let uuid):
+        case .uuidjpg(let uuid):
             return "\(uuid).jpg"
         case .username:
             return "username"

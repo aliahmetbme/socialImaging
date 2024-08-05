@@ -17,11 +17,13 @@ PODS:
   - SDWebImage (5.19.2):
     - SDWebImage/Core (= 5.19.2)
   - SDWebImage/Core (5.19.2)
+  - SnapKit (4.2.0)
 
 DEPENDENCIES:
   - GoogleSignIn
   - IQKeyboardManagerSwift
   - SDWebImage
+  - SnapKit
 
 SPEC REPOS:
   trunk:
@@ -31,6 +33,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - IQKeyboardManagerSwift
     - SDWebImage
+    - SnapKit
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
@@ -39,7 +42,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
   SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
+  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
 
-PODFILE CHECKSUM: 00a8ec615aa5f72223cc6879849f9f3076e48a3b
+PODFILE CHECKSUM: 99fb47596a72502b57d4d3f7113b4e6274732616
 
 COCOAPODS: 1.15.2

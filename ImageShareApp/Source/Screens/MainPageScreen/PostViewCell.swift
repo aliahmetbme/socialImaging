@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 protocol PostViewCellProtocol {
     func clicked(indexPath: IndexPath)
@@ -30,6 +31,11 @@ class PostViewCell: UITableViewCell {
         super.awakeFromNib()
         postImage.layer.cornerRadius = 10
         postImage.clipsToBounds = true
+        postImage.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(30)  // Soldan 30 px padding
+            make.trailing.equalToSuperview().inset(30)  // Sağdan 30 px padding
+            make.height.equalTo(postImage.snp.width)
+        }
         
         userpp.layer.cornerRadius = 20
         userpp.clipsToBounds = true
@@ -43,11 +49,15 @@ class PostViewCell: UITableViewCell {
     }
     
     @IBAction func likePost(_ sender: Any) {
-        cellProtocol?.clicked(indexPath: indexPath!)
+       if let indexPath = indexPath {
+            cellProtocol?.clicked(indexPath: indexPath)
+        }
     }
     
     @IBAction func showComments(_ sender: Any) {
-        cellProtocol?.showComments(indexPath: indexPath!)
+        if let indexPath = indexPath {
+            cellProtocol?.showComments(indexPath: indexPath)
+        }
     }
     
 }

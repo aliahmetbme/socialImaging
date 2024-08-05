@@ -18,102 +18,182 @@ class FireBaseDBService {
     let firestore = Firestore.firestore()
     let userUID = Auth.auth().currentUser?.uid
     
-    func getPosts (tableView: UITableView, filterField: String? = nil ,completion:@escaping (([PostModel]) -> Void)) {
-        
-        var postArray: [PostModel] = []
-        
-        var query: Query = firestore.collection(DBEndPoints.Post.endPointsString)
+    func getAllPosts(completion: @escaping (([PostModel]) -> Void)){
+        let query: Query = firestore.collection(DBEndPoints.Post.endPointsString)
             .order(by: DBEndPoints.date.endPointsString, descending: true)
         
-        if let field = filterField {
-            query = query.whereField(field, isEqualTo: "\(userUID!)")
-        }
-        
-        query.addSnapshotListener {
-            querySnapshot, error in
-            
-            if error != nil {
-                print("Veri alınamadı: \(String(describing: error?.localizedDescription))")
+        query.getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Error fetching posts: \(error)")
+                completion([])
                 return
-            } else {
-                if let snapshot = querySnapshot, !snapshot.isEmpty {
+            }
+            
+            var postArray: [PostModel] = []
+            postArray.removeAll()
+            
+            for document in querySnapshot!.documents {
+                let post = self.createPostModel(from: document)
+                postArray.append(post)
+            }
+            
+            DispatchQueue.main.async {
+                completion(postArray)
+            }
+        }
+    }
+    
+    func observePostChanges(postArray: [PostModel], tableView: UITableView, completion: @escaping (([PostModel],IndexPath?) -> Void)) {
+        
+    let query: Query = firestore.collection(DBEndPoints.Post.endPointsString).order(by: DBEndPoints.date.endPointsString, descending: true)
+    
+    var posts = postArray
+        
+        query.addSnapshotListener { querySnapshot, error in
+            if let error = error {
+                print("Error fetching posts: \(error)")
+                return
+            }
+            
+            guard let snapshot = querySnapshot else {
+                completion([],nil)
+                return
+            }
+            
+            snapshot.documentChanges.forEach { diff in
+                if (diff.type == .modified){
+                    let modifiedPost = self.createPostModel(from: diff.document)
                     
-                    for document in snapshot.documents {
-                        // documanların özel idleri
-                        let documentid = document.documentID
-                       // any olarak döndürüyor Stringe çevirememiz lazım
-                        let postImageurl = document.get("imageUrl") as? String ?? ""
-                        let userUID = document.get("userUID") as? String ?? ""
-                        let date = document.get("date") as? String ?? ""
-                        let description = document.get("comment") as? String ?? ""
-                        let comments = document.get("comments") as? [String] ?? []
-                        let likeCount = document.get("likeCount") as? Int ?? 0
-                        
-                        let post = PostModel(postImageUrl: postImageurl,
-                                         userUID: userUID,
-                                         description: description,
-                                         date: date,
-                                         comments: comments,
-                                         likeCount: likeCount,
-                                         postId: documentid)
-                        
-                        postArray.append(post)
+                    if let index = postArray.firstIndex(where: { $0.postId == modifiedPost.postId }) {
+                        posts[index] = modifiedPost
                         
                         DispatchQueue.main.async {
-                           tableView.reloadData()
+                            let indexPath = IndexPath(row: index, section: 0)
+                            completion(posts,indexPath)
                         }
                     }
-                    completion(postArray)
                 }
             }
         }
     }
-    
-    func setLikedofPosts(post: PostModel, likeButton: UIButton, completion: @escaping (PostModel?) -> Void) {
+
+
+    func createPostModel(from document: DocumentSnapshot) -> PostModel {
+        let documentId = document.documentID
+        let postImageUrl = document.get("imageUrl") as? String ?? ""
+        let userUID = document.get("userUID") as? String ?? ""
+        let date = document.get("date") as? String ?? ""
+        let description = document.get("comment") as? String ?? ""
+        let comments = document.get("comments") as? [String] ?? []
+        let likeCount = document.get("likeCount") as? Int ?? 0
         
-        let iconLiked = UIImage(systemName: "heart.fill")
-        let iconNonLiked = UIImage(systemName: "heart")
-        let likeDocRef = firestore.collection("Post").document(post.postId).collection("likes").document(userUID!)
-            
-        likeDocRef.getDocument { (document, error) in
-            guard error == nil else {
-                print("Error fetching document: \(String(describing: error))")
-                completion(nil)
+        return PostModel(
+            postImageUrl: postImageUrl,
+            userUID: userUID,
+            description: description,
+            date: date,
+            comments: comments,
+            likeCount: likeCount,
+            postId: documentId
+        )
+    }
+
+func getUsersOwnPosts (tableView: UITableView, filterField: String, completion: @escaping (([PostModel]) -> Void)) {
+        var postArray: [PostModel] = []
+        
+    let QUERY: Query = firestore.collection(DBEndPoints.Post.endPointsString)
+        .order(by: DBEndPoints.date.endPointsString, descending: true).whereField(filterField, isEqualTo: userUID!)
+        
+    QUERY.addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                print("Veri alınamadı: POSTLAR YOK")
                 return
             }
             
-            var updatedPost = post // PostModel'in bir kopyasını oluşturun
+            guard let snapshot = querySnapshot, !snapshot.isEmpty else {
+                print("Snapshot boş.")
+                DispatchQueue.main.async {
+                    completion([])
+                }
+                return
+            }
+            
+            postArray.removeAll()
+            
+            for document in snapshot.documents {
+                let documentId = document.documentID
+                let postImageUrl = document.get("imageUrl") as? String ?? ""
+                let userUID = document.get("userUID") as? String ?? ""
+                let date = document.get("date") as? String ?? ""
+                let description = document.get("comment") as? String ?? ""
+                let comments = document.get("comments") as? [String] ?? []
+                let likeCount = document.get("likeCount") as? Int ?? 0
+                
+                let post = PostModel(
+                    postImageUrl: postImageUrl,
+                    userUID: userUID,
+                    description: description,
+                    date: date,
+                    comments: comments,
+                    likeCount: likeCount,
+                    postId: documentId
+                )
+                
+                postArray.append(post)
+            }
+            DispatchQueue.main.async {
+                completion(postArray)
+                tableView.reloadData()
+           }
+        }
+    }
+    
+    func setLikedofPosts(indexPath: IndexPath, postId: String, likeButton: UIButton, likeCount: Int, table: UITableView) {
+        let iconLiked = UIImage(systemName: "heart.fill")
+        let iconNonLiked = UIImage(systemName: "heart")
+        let likeDocRef = firestore.collection("Post").document(postId).collection("likes").document(userUID!)
+        var likeCount = likeCount
+        
+        likeDocRef.getDocument { [weak self] (document, error) in
+            guard error == nil else {
+                print("Error fetching document: \(String(describing: error))")
+                return
+            }
             
             if let document = document, document.exists {
                 // Kullanıcı zaten beğenmişse, beğeniyi kaldır
                 likeButton.setImage(iconNonLiked, for: .normal)
-                updatedPost.likeCount -= 1
+                likeCount -= 1
                 
                 // Firestore'dan beğenmeyi kaldır
                 likeDocRef.delete()
+                
             } else {
                 // Kullanıcı beğenmemişse, beğeniyi ekle
                 likeButton.setImage(iconLiked, for: .normal)
-                updatedPost.likeCount += 1
+                likeCount += 1
                 
                 // Kullanıcıyı "likes" alt koleksiyonuna ekle
                 likeDocRef.setData([
-                    "userId": self.userUID!,
+                    "userId": self?.userUID ?? "",
                     "timestamp": FieldValue.serverTimestamp()
                 ])
             }
-            print("updatedPost.likeCount \(updatedPost.likeCount )")
-            // Firestore'a beğeniyi ekle veya kaldır
-            self.firestore.collection("Post").document(updatedPost.postId).updateData([
-                "likeCount": updatedPost.likeCount
-            ])
             
-            // Güncellenmiş post modelini completion ile geri döndür
-            completion(updatedPost)
+            // Firestore'a beğeniyi ekle veya kaldır
+            self?.firestore.collection("Post").document(postId).updateData([
+                "likeCount": likeCount
+            ]) { error in
+                if let error = error {
+                    print("Error updating like count: \(error)")
+                } else {
+                    // Beğenilen postun güncellenmesini dinle
+                }
+            }
         }
     }
 
-    
+
     func isPostLiked(postRow: PostModel, completion: @escaping ((Bool) -> Void)) {
     
         let likeDocRef = firestore.collection(DBEndPoints.Post.endPointsString).document(postRow.postId).collection(DBEndPoints.likes.endPointsString).document(userUID!)

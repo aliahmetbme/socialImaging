@@ -7,6 +7,7 @@ target 'ImageShareApp' do
   pod 'SDWebImage'
   pod 'IQKeyboardManagerSwift'
   pod 'GoogleSignIn'
+  pod 'SnapKit'
 
   # Pods for ImageShareApp
 

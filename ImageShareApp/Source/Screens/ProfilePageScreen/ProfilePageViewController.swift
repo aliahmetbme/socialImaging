@@ -21,7 +21,7 @@ class ProfilePageViewController: UIViewController {
     let firebaseAuhtService = FireBaseAuthService()
     let firebaseDBService = FireBaseDBService()
 
-    var postArray: [PostModel] = []
+   private var usersOwnPosts: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,10 +53,11 @@ class ProfilePageViewController: UIViewController {
                 self.usernameLabel.text = "@\(username)"
             }
         }
-        // getting Posts
-        firebaseDBService.getPosts(tableView: postsTable, filterField: DBEndPoints.userUID.endPointsString) { postData in
-            self.postArray = postData
-            self.postCount.text = "\(postData.count)"
+        
+        // getting own Posts
+        firebaseDBService.getUsersOwnPosts(tableView: postsTable, filterField: DBEndPoints.userUID.endPointsString) { ownPostData in
+            self.usersOwnPosts = ownPostData
+            self.postCount.text = "\(ownPostData.count)"
         }
     }
 }
@@ -83,11 +84,9 @@ extension ProfilePageViewController {
 extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource, UserPostViewCellProtocol {
     func clicked(indexPath: IndexPath) {
         let cell = postsTable.cellForRow(at: indexPath) as? UsersPostViewCell
+        let post = usersOwnPosts[indexPath.row]
         
-        firebaseDBService.setLikedofPosts( post: postArray[indexPath.row], likeButton: cell!.likeButton) { updatedPost in
-            self.postArray[indexPath.row] = updatedPost!
-            self.postsTable.reloadData()
-        }
+        firebaseDBService.setLikedofPosts(indexPath: indexPath ,postId: post.postId, likeButton: cell!.likeButton,likeCount: post.likeCount, table: postsTable)
     }
     
     
@@ -98,7 +97,7 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
             if let indexPath = sender as? IndexPath {
                 let secondVC = segue.destination as! CommentsPageViewController
                 
-                let post = postArray[indexPath.row]
+                let post = usersOwnPosts[indexPath.row]
                 secondVC.postID = post.postId
             }
         }
@@ -110,18 +109,15 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
     }
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return postArray.count
+        return usersOwnPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let postRow = postArray[indexPath.row]
+        let postRow = usersOwnPosts[indexPath.row]
         let cell = postsTable.dequeueReusableCell(withIdentifier: "usersPostCell", for: indexPath) as! UsersPostViewCell
         let iconLiked = UIImage(systemName: "heart.fill")
         let iconNonLiked = UIImage(systemName: "heart")
-                
-        cell.cellProtocol = self
-        cell.indexPath = indexPath
-        
+                        
         firebaseDBService.isPostLiked(postRow: postRow) { isLiked in
             if (isLiked) {
                 cell.likeButton.setImage(iconLiked, for: .normal)
@@ -129,11 +125,10 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
                 cell.likeButton.setImage(iconNonLiked, for: .normal)
             }
         }
+        cell.cellProtocol = self
+        cell.indexPath = indexPath
                 
         cell.usersPostImage.sd_setImage(with: URL(string: postRow.postImageUrl ?? ""))
-        cell.descriptionLabel.text = postRow.description
-        cell.likeCountLabel.text = "\(postRow.likeCount) likes"
-        
     
         firebaseAuhtService.getUserName(uid: postRow.userUID!) { username in
             if let username = username {
@@ -149,6 +144,9 @@ extension ProfilePageViewController: UITableViewDelegate, UITableViewDataSource,
                 cell.userPPImage.setInitialImages()
             }
         }
+        
+        cell.likeCountLabel.text = "\(postRow.likeCount) likes"
+        cell.descriptionLabel.text = postRow.description
         
         return cell
     }

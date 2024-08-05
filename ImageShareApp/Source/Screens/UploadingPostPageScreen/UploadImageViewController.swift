@@ -111,7 +111,7 @@ extension UploadImageViewController {
         let userUID = Auth.auth().currentUser?.uid
         
         if let ImageData = selectedImage?.jpegData(compressionQuality: 0.5) {
-                       
+            self.uploadbutton.isEnabled = false
             imageReferance.putData(ImageData) { StorageMetadata, error in
                 if error != nil {
                     self.showErrorMessage(title: "Error", message:  (error?.localizedDescription ?? "Try again"))
@@ -120,22 +120,21 @@ extension UploadImageViewController {
                         if error == nil {
                             
                             if let postImageUrl = url?.absoluteString { // resmin storage'dan linkini alıyor, url'i string e çevirip veriyor
-                            
-                                let post = PostUploadModel(imageUrl: postImageUrl, 
-                                                     userUID: userUID,
-                                                     comment: self.comment.text!,
-                                                     date: (FieldValue.serverTimestamp()),
-                                                     comments: [String](),
-                                                     likeCount: 0,
-                                                     likes: [String]()).toDictionary()
+                                
+                                let post = PostUploadModel(imageUrl: postImageUrl,
+                                                           userUID: userUID,
+                                                           comment: self.comment.text!,
+                                                           date: (FieldValue.serverTimestamp()),
+                                                           likeCount: 0).toDictionary()
                                 
                                 fireStoreDataBase.collection("Post").addDocument(data: post) { error in
                                     if error != nil {
+                                        self.checkIsShouldEnabledUploadButton()
                                         self.showErrorMessage(title: "Error", message: error?.localizedDescription ?? "Try again")
                                     } else {
-                                        self.showErrorMessage(title: "Congrulation", message: "Successful")
                                         self.initialSettings()
                                         self.checkIsShouldEnabledUploadButton()
+                                        self.showErrorMessage(title: "Congrulation", message: "Successful")
                                     }
                                 }
                             }

@@ -13,36 +13,51 @@ import SDWebImage
 
 class MainPageViewController: UIViewController {
 
-    @IBOutlet private var postsList: UITableView!
+    @IBOutlet private var PostsList: UITableView!
     private var postArray: [PostModel] = []
     let firebaseAuhtService = FireBaseAuthService()
     let firebaseDBService = FireBaseDBService()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        tableViewInitialSettings()
         initialSettings()
+        
+        firebaseDBService.getAllPosts { postData in
+            self.postArray = postData
+            self.PostsList.reloadData()
+            
+            self.firebaseDBService.observePostChanges(postArray: self.postArray, tableView: self.PostsList) { postArray,indexPath in
+                self.postArray = postArray
+                if let indexPath = indexPath {
+                   self.PostsList.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        tableViewInitialSettings()
         initialSettings()
+        
+        firebaseDBService.getAllPosts { postData in
+            self.postArray = postData
+            self.PostsList.reloadData()
+        }
     }
     
     private func initialSettings () {
+        print("itialSettings")
         navigationController?.navigationBar.isHidden = true
-        
-        postsList.delegate = self
-        postsList.dataSource = self
-        
-        postsList.rowHeight = UITableView.automaticDimension
-        postsList.estimatedRowHeight = UITableView.automaticDimension
-        
-        firebaseDBService.getPosts(tableView: postsList) { postData in
-            self.postArray = postData
-            self.postsList.reloadData()
-        }
-       
-    }
 
+}
+    private func tableViewInitialSettings () {
+        print("tableViewInitialSettings")
+        PostsList.delegate = self
+        PostsList.dataSource = self
+        
+        PostsList.rowHeight = UITableView.automaticDimension
+        PostsList.estimatedRowHeight = UITableView.automaticDimension
+    }
 }
 
 // TableView
@@ -66,13 +81,11 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
     }
     
     func clicked(indexPath: IndexPath) {
+        let cell = PostsList.cellForRow(at: indexPath) as? PostViewCell
+        let post = postArray[indexPath.row]
         
-        let cell = postsList.cellForRow(at: indexPath) as? PostViewCell
-        
-        firebaseDBService.setLikedofPosts(post: postArray[indexPath.row], likeButton: cell!.likeButton) {updatedPost in
-            self.postArray[indexPath.row] = updatedPost!
-            cell?.reloadInputViews()
-        }
+        firebaseDBService.setLikedofPosts(indexPath: indexPath, postId: post.postId, likeButton: cell!.likeButton, likeCount: post.likeCount, table: PostsList)
+
     }
     
     
@@ -80,52 +93,58 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
         return postArray.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // dequeueReusableCell : yeniden kullanılabilen
-        // oluştur sonra cast ediyorsun sınıfa sınıftaki şeylere ulaşabilmen adına
-        
+    
+   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postRow = postArray[indexPath.row]
-        let cell = postsList.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! PostViewCell
-        let iconLiked = UIImage(systemName: "heart.fill")
-        let iconNonLiked = UIImage(systemName: "heart")
+        let cell = PostsList.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! PostViewCell
 
-        
-        firebaseDBService.isPostLiked(postRow: postRow) { isLiked in
-            if (isLiked) {
-                cell.likeButton.setImage(iconLiked, for: .normal)
-            } else {
-                cell.likeButton.setImage(iconNonLiked, for: .normal)
-            }
-        }
-            
-        // her bir hücre için protocollerin kullanabilmek için
         cell.cellProtocol = self
         cell.indexPath = indexPath
-        
         cell.descriptionLabel.text = postRow.description
-    
+        cell.likeCount.text = "\(postRow.likeCount) likes"
+
+       cell.usernameUpper.text = "Loading ..."
+       cell.usernameDown.text = "Loading ..."
+       cell.userpp.setInitialImages()
+
+       
+        firebaseDBService.isPostLiked(postRow: postRow) { isLiked in
+            DispatchQueue.main.async {
+                if isLiked {
+                    cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                } else {
+                    cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+                }
+            }
+        }
+
         firebaseAuhtService.getUserName(uid: postRow.userUID!) { username in
+            DispatchQueue.main.async {
                 if let username = username {
                     cell.usernameUpper.text = username
                     cell.usernameDown.text = username
+                }
             }
         }
-                
-        firebaseAuhtService.getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl  in
+
+        firebaseAuhtService.getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl in
+            DispatchQueue.main.async {
                 if let url = usersProfileImageUrl {
                     cell.userpp.sd_setImage(with: URL(string: url))
                 } else {
                     cell.userpp.setInitialImages()
                 }
             }
-            
-            cell.postImage.sd_setImage(with: URL(string: postRow.postImageUrl ?? ""))
-            cell.likeCount.text = "\(postRow.likeCount) likes"
-            
-            return cell
         }
+
+        cell.postImage.sd_setImage(with: URL(string: postRow.postImageUrl ?? ""))
+
+        return cell
+    }
+
+
         
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
     
