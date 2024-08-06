@@ -52,8 +52,11 @@
 		FE2EFF2C2C28879100AE84E6 /* ProfilePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2EFF2B2C28879100AE84E6 /* ProfilePageViewController.swift */; };
 		FE32F6482C2A319E00945627 /* PostViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE32F6472C2A319E00945627 /* PostViewCell.swift */; };
 		FE3518132C455624008745BF /* Extension+UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3518122C455624008745BF /* Extension+UIButton.swift */; };
+		FE3DCAD82C628C4C003E1356 /* 5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE3DCAD42C628C4C003E1356 /* 5.jpg */; };
+		FE3DCAD92C628C4C003E1356 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE3DCAD52C628C4C003E1356 /* 3.jpg */; };
+		FE3DCADA2C628C4C003E1356 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE3DCAD62C628C4C003E1356 /* 4.jpg */; };
+		FE3DCADB2C628C4C003E1356 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE3DCAD72C628C4C003E1356 /* 2.jpg */; };
 		FE52D7612C2C9B6000B8FC5B /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE52D7602C2C9B6000B8FC5B /* SettingsPageViewController.swift */; };
-		FE64A40E2C4FF3FA0069D5AF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */; };
 		FE64A4102C4FF5270069D5AF /* FireBaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64A40F2C4FF5270069D5AF /* FireBaseAuthService.swift */; };
 		FE791CB12C4303EF0021B0AB /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB02C4303EF0021B0AB /* UserModel.swift */; };
 		FE791CB62C4338F70021B0AB /* RegistrationPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB52C4338F70021B0AB /* RegistrationPageViewController.swift */; };
@@ -61,10 +64,8 @@
 		FE791CBA2C434ADB0021B0AB /* Extension+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE791CB92C434ADB0021B0AB /* Extension+UIViewController.swift */; };
 		FE83E9052C486182007C54C6 /* Extension+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE83E9042C486182007C54C6 /* Extension+UIImage.swift */; };
 		FE83E9072C486C10007C54C6 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE83E9062C486C10007C54C6 /* Enums.swift */; };
-		FE83E9092C48909D007C54C6 /* Extension+FirebaseDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE83E9082C48909D007C54C6 /* Extension+FirebaseDB.swift */; };
 		FE8F98F12C2B7E09002858F9 /* CommentsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8F98F02C2B7E09002858F9 /* CommentsPageViewController.swift */; };
 		FE8F98F32C2B97DF002858F9 /* CommentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8F98F22C2B97DF002858F9 /* CommentViewCell.swift */; };
-		FEA313F12C44511300DD2F90 /* Extension+FirebaseAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA313F02C44511300DD2F90 /* Extension+FirebaseAuth.swift */; };
 		FECC97DD2C2F43F7008ACA44 /* CommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECC97DC2C2F43F7008ACA44 /* CommentModel.swift */; };
 		FEECA2062C2A42710048D017 /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEECA2052C2A42710048D017 /* PostModel.swift */; };
 /* End PBXBuildFile section */
@@ -91,8 +92,11 @@
 		FE2EFF2B2C28879100AE84E6 /* ProfilePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePageViewController.swift; sourceTree = "<group>"; };
 		FE32F6472C2A319E00945627 /* PostViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewCell.swift; sourceTree = "<group>"; };
 		FE3518122C455624008745BF /* Extension+UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIButton.swift"; sourceTree = "<group>"; };
+		FE3DCAD42C628C4C003E1356 /* 5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 5.jpg; sourceTree = "<group>"; };
+		FE3DCAD52C628C4C003E1356 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
+		FE3DCAD62C628C4C003E1356 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
+		FE3DCAD72C628C4C003E1356 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
 		FE52D7602C2C9B6000B8FC5B /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
-		FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FE64A40F2C4FF5270069D5AF /* FireBaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseAuthService.swift; sourceTree = "<group>"; };
 		FE791CB02C4303EF0021B0AB /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		FE791CB52C4338F70021B0AB /* RegistrationPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPageViewController.swift; sourceTree = "<group>"; };
@@ -100,10 +104,8 @@
 		FE791CB92C434ADB0021B0AB /* Extension+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIViewController.swift"; sourceTree = "<group>"; };
 		FE83E9042C486182007C54C6 /* Extension+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIImage.swift"; sourceTree = "<group>"; };
 		FE83E9062C486C10007C54C6 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
-		FE83E9082C48909D007C54C6 /* Extension+FirebaseDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+FirebaseDB.swift"; sourceTree = "<group>"; };
 		FE8F98F02C2B7E09002858F9 /* CommentsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsPageViewController.swift; sourceTree = "<group>"; };
 		FE8F98F22C2B97DF002858F9 /* CommentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewCell.swift; sourceTree = "<group>"; };
-		FEA313F02C44511300DD2F90 /* Extension+FirebaseAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+FirebaseAuth.swift"; sourceTree = "<group>"; };
 		FECC97DC2C2F43F7008ACA44 /* CommentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentModel.swift; sourceTree = "<group>"; };
 		FEECA2052C2A42710048D017 /* PostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -187,10 +189,19 @@
 			isa = PBXGroup;
 			children = (
 				FE791CB32C43044C0021B0AB /* Source */,
-				FE0061A12C286ACC00C77E3A /* GoogleService-Info.plist */,
-				FE0061622C2865CE00C77E3A /* Info.plist */,
 			);
 			path = ImageShareApp;
+			sourceTree = "<group>";
+		};
+		FE3DCADC2C628C50003E1356 /* ProjectImages */ = {
+			isa = PBXGroup;
+			children = (
+				FE3DCAD72C628C4C003E1356 /* 2.jpg */,
+				FE3DCAD52C628C4C003E1356 /* 3.jpg */,
+				FE3DCAD62C628C4C003E1356 /* 4.jpg */,
+				FE3DCAD42C628C4C003E1356 /* 5.jpg */,
+			);
+			path = ProjectImages;
 			sourceTree = "<group>";
 		};
 		FE64A40A2C4FF3950069D5AF /* Helper */ = {
@@ -205,7 +216,6 @@
 		FE64A40B2C4FF3D30069D5AF /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				FE64A40D2C4FF3FA0069D5AF /* NetworkManager.swift */,
 				FE1E1D162C5012B400EE58D4 /* DBEndPoints.swift */,
 			);
 			path = Network;
@@ -332,11 +342,9 @@
 			children = (
 				FE791CB72C4339390021B0AB /* Extension+UIImageView.swift */,
 				FE791CB92C434ADB0021B0AB /* Extension+UIViewController.swift */,
-				FEA313F02C44511300DD2F90 /* Extension+FirebaseAuth.swift */,
 				FE029F882C449D6C00C46DDC /* Extension+UITextfield.swift */,
 				FE3518122C455624008745BF /* Extension+UIButton.swift */,
 				FE83E9042C486182007C54C6 /* Extension+UIImage.swift */,
-				FE83E9082C48909D007C54C6 /* Extension+FirebaseDB.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -345,8 +353,6 @@
 			isa = PBXGroup;
 			children = (
 				FE64A40A2C4FF3950069D5AF /* Helper */,
-				FE0061562C2865CC00C77E3A /* SceneDelegate.swift */,
-				FE0061542C2865CC00C77E3A /* AppDelegate.swift */,
 				FE791CB42C4304820021B0AB /* Resource */,
 				FE791CA12C43006B0021B0AB /* Model */,
 				FE791CA42C4300AD0021B0AB /* Screens */,
@@ -358,6 +364,11 @@
 		FE791CB42C4304820021B0AB /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				FE3DCADC2C628C50003E1356 /* ProjectImages */,
+				FE0061A12C286ACC00C77E3A /* GoogleService-Info.plist */,
+				FE0061622C2865CE00C77E3A /* Info.plist */,
+				FE0061562C2865CC00C77E3A /* SceneDelegate.swift */,
+				FE0061542C2865CC00C77E3A /* AppDelegate.swift */,
 				FE00615F2C2865CE00C77E3A /* LaunchScreen.storyboard */,
 				FE00615A2C2865CC00C77E3A /* Main.storyboard */,
 				FE00615D2C2865CE00C77E3A /* Assets.xcassets */,
@@ -460,8 +471,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE0061612C2865CE00C77E3A /* LaunchScreen.storyboard in Resources */,
+				FE3DCADA2C628C4C003E1356 /* 4.jpg in Resources */,
+				FE3DCAD82C628C4C003E1356 /* 5.jpg in Resources */,
 				FE0061A22C286ACC00C77E3A /* GoogleService-Info.plist in Resources */,
+				FE3DCAD92C628C4C003E1356 /* 3.jpg in Resources */,
 				FE00615E2C2865CE00C77E3A /* Assets.xcassets in Resources */,
+				FE3DCADB2C628C4C003E1356 /* 2.jpg in Resources */,
 				FE00615C2C2865CC00C77E3A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,7 +535,6 @@
 				FE791CB82C4339390021B0AB /* Extension+UIImageView.swift in Sources */,
 				FE8F98F32C2B97DF002858F9 /* CommentViewCell.swift in Sources */,
 				FE1E1D172C5012B400EE58D4 /* DBEndPoints.swift in Sources */,
-				FEA313F12C44511300DD2F90 /* Extension+FirebaseAuth.swift in Sources */,
 				FECC97DD2C2F43F7008ACA44 /* CommentModel.swift in Sources */,
 				FE791CB62C4338F70021B0AB /* RegistrationPageViewController.swift in Sources */,
 				FE791CBA2C434ADB0021B0AB /* Extension+UIViewController.swift in Sources */,
@@ -528,8 +542,6 @@
 				FE52D7612C2C9B6000B8FC5B /* SettingsPageViewController.swift in Sources */,
 				FE32F6482C2A319E00945627 /* PostViewCell.swift in Sources */,
 				FE83E9072C486C10007C54C6 /* Enums.swift in Sources */,
-				FE83E9092C48909D007C54C6 /* Extension+FirebaseDB.swift in Sources */,
-				FE64A40E2C4FF3FA0069D5AF /* NetworkManager.swift in Sources */,
 				FE64A4102C4FF5270069D5AF /* FireBaseAuthService.swift in Sources */,
 				FE3518132C455624008745BF /* Extension+UIButton.swift in Sources */,
 				FEECA2062C2A42710048D017 /* PostModel.swift in Sources */,
@@ -619,7 +631,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -676,7 +688,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -696,13 +708,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RZG5C6GQ54;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ImageShareApp/Info.plist;
+				INFOPLIST_FILE = ImageShareApp/Source/Resource/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PICCONNECT;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -727,13 +739,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RZG5C6GQ54;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ImageShareApp/Info.plist;
+				INFOPLIST_FILE = ImageShareApp/Source/Resource/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PICCONNECT;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -429,11 +429,19 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jdH-fh-ItJ">
+                                <rect key="frame" x="328" y="25" width="30" height="30"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <connections>
+                                    <action selector="clearImage:" destination="mAP-94-xa9" eventType="touchUpInside" id="cjh-j5-1cO"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="725-ZN-XPF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="725-ZN-XPF" firstAttribute="trailing" secondItem="2ME-0z-Tzr" secondAttribute="trailing" constant="30" id="4qw-yH-8ic"/>
+                            <constraint firstItem="725-ZN-XPF" firstAttribute="trailing" secondItem="jdH-fh-ItJ" secondAttribute="trailing" constant="35" id="619-Zm-lGu"/>
                             <constraint firstItem="2ME-0z-Tzr" firstAttribute="leading" secondItem="725-ZN-XPF" secondAttribute="leading" constant="30" id="IPp-ws-egQ"/>
                             <constraint firstItem="33R-iV-6gW" firstAttribute="leading" secondItem="725-ZN-XPF" secondAttribute="leading" constant="30" id="KCz-Ve-pax"/>
                             <constraint firstItem="2ME-0z-Tzr" firstAttribute="top" secondItem="33R-iV-6gW" secondAttribute="bottom" constant="30" id="Lhn-VB-ilx"/>
@@ -444,11 +452,13 @@
                             <constraint firstItem="725-ZN-XPF" firstAttribute="trailing" secondItem="89X-nH-YrH" secondAttribute="trailing" constant="30" id="hUv-26-poB"/>
                             <constraint firstItem="725-ZN-XPF" firstAttribute="bottom" secondItem="89X-nH-YrH" secondAttribute="bottom" constant="20" id="hZS-zV-JF8"/>
                             <constraint firstItem="725-ZN-XPF" firstAttribute="trailing" secondItem="ntD-yw-sxa" secondAttribute="trailing" constant="30" id="pcY-he-496"/>
+                            <constraint firstItem="jdH-fh-ItJ" firstAttribute="top" secondItem="akd-6E-1XC" secondAttribute="topMargin" constant="25" id="tpn-Pp-nDr"/>
                             <constraint firstItem="ntD-yw-sxa" firstAttribute="top" secondItem="2ME-0z-Tzr" secondAttribute="bottom" constant="30" id="wVd-na-juy"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="square.and.arrow.up" catalog="system" id="56I-lj-xDT"/>
                     <connections>
+                        <outlet property="ClearImageButton" destination="jdH-fh-ItJ" id="T6r-6I-bxG"/>
                         <outlet property="comment" destination="ntD-yw-sxa" id="Ukp-LO-on4"/>
                         <outlet property="openCamerabutton" destination="2ME-0z-Tzr" id="qXh-fw-Mjh"/>
                         <outlet property="uploadImage" destination="33R-iV-6gW" id="1lx-Zl-RrQ"/>
@@ -879,7 +889,6 @@
                                                     <rect key="frame" x="30" y="65" width="333" height="333"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="Hac-DO-ct4" secondAttribute="height" multiplier="100:100" id="ZZc-Kb-rUy"/>
-                                                        <constraint firstAttribute="height" constant="300" id="j4J-CM-Pyw"/>
                                                     </constraints>
                                                 </imageView>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ppImage" translatesAutoresizingMaskIntoConstraints="NO" id="nu5-J3-Gle">

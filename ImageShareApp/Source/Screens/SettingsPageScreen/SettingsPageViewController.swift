@@ -26,10 +26,6 @@ class SettingsPageViewController: UIViewController, UITextFieldDelegate, UIImage
         navigationController?.navigationBar.isHidden = true
         initialDesign()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        initialDesign()
-    }
        
     private func initialDesign () {
         if let profilePictureURL = curretUserProfilePictureURL {

@@ -32,8 +32,8 @@ class UsersPostViewCell: UITableViewCell {
         usersPostImage.clipsToBounds = true
         
         usersPostImage.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(30)  // Soldan 30 px padding
-            make.trailing.equalToSuperview().inset(30)  // Sağdan 30 px padding
+            make.leading.equalToSuperview().offset(30)
+            make.trailing.equalToSuperview().inset(30)
             make.height.equalTo(usersPostImage.snp.width)
         }
         

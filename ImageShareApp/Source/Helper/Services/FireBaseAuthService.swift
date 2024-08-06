@@ -13,10 +13,13 @@ import FirebaseStorage
 import SDWebImage
 
 class FireBaseAuthService: UIViewController {
+    
+    /// - User Sign In
     func signIn(user: LoginUser,completion: @escaping (AuthDataResult?, Error?) -> Void) {
         Auth.auth().signIn(withEmail: user.email, password: user.password, completion: completion)
     }
-    
+    /// - Google Sign In
+
     func signInGoogle( viewController: UIViewController, completion: @escaping (Bool) -> Void) {
         
         guard let clientID = FirebaseApp.app()?.options.clientID else {

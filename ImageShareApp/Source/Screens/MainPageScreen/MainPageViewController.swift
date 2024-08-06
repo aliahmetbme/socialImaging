@@ -15,43 +15,58 @@ class MainPageViewController: UIViewController {
 
     @IBOutlet private var PostsList: UITableView!
     private var postArray: [PostModel] = []
-    let firebaseAuhtService = FireBaseAuthService()
-    let firebaseDBService = FireBaseDBService()
-    
+    private let firebaseAuhtService = FireBaseAuthService()
+    private let firebaseDBService = FireBaseDBService()
+    private var refreshControl = UIRefreshControl()
+
     override func viewDidLoad() {
         tableViewInitialSettings()
         initialSettings()
-        
-        firebaseDBService.getAllPosts { postData in
-            self.postArray = postData
-            self.PostsList.reloadData()
+        fetchAllPost()
+        setupRefreshControl()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // taking post again when back to page
+        fetchAllPost()
+    }
+    // observing post changes real time
+    private func fetchAndObserveChanges() {
+        self.firebaseDBService.observePostChanges(postArray: self.postArray, tableView: self.PostsList) { updatedPostArray, indexPath in
+            self.postArray = updatedPostArray
             
-            self.firebaseDBService.observePostChanges(postArray: self.postArray, tableView: self.PostsList) { postArray,indexPath in
-                self.postArray = postArray
-                if let indexPath = indexPath {
-                   self.PostsList.reloadRows(at: [indexPath], with: .none)
-                }
+            if let indexPath = indexPath {
+                self.PostsList.reloadRows(at: [indexPath], with: .none)
             }
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        tableViewInitialSettings()
-        initialSettings()
-        
+    private func fetchAllPost() {
         firebaseDBService.getAllPosts { postData in
             self.postArray = postData
             self.PostsList.reloadData()
         }
     }
     
-    private func initialSettings () {
-        print("itialSettings")
-        navigationController?.navigationBar.isHidden = true
+    private func setupRefreshControl() {
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull for refresh")
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        PostsList.refreshControl = refreshControl
+    }
+    
+    @objc private func refreshTableView() {
+        firebaseDBService.getAllPosts { postData in
+            self.postArray = postData
+            self.PostsList.reloadData()
+            self.refreshControl.endRefreshing()
+        }
+    }
 
-}
+    private func initialSettings () {
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     private func tableViewInitialSettings () {
-        print("tableViewInitialSettings")
         PostsList.delegate = self
         PostsList.dataSource = self
         
@@ -85,6 +100,8 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
         let post = postArray[indexPath.row]
         
         firebaseDBService.setLikedofPosts(indexPath: indexPath, postId: post.postId, likeButton: cell!.likeButton, likeCount: post.likeCount, table: PostsList)
+        // observing liked changes
+        fetchAndObserveChanges()
 
     }
     
@@ -102,11 +119,10 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
         cell.indexPath = indexPath
         cell.descriptionLabel.text = postRow.description
         cell.likeCount.text = "\(postRow.likeCount) likes"
-
-       cell.usernameUpper.text = "Loading ..."
-       cell.usernameDown.text = "Loading ..."
-       cell.userpp.setInitialImages()
-
+       
+        cell.usernameDown.text = "loading ..."
+        cell.usernameUpper.text = "loading ..."
+        cell.userpp.isHidden = true
        
         firebaseDBService.isPostLiked(postRow: postRow) { isLiked in
             DispatchQueue.main.async {
@@ -129,6 +145,7 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
 
         firebaseAuhtService.getUserPhotoURL(uid: postRow.userUID!) { usersProfileImageUrl in
             DispatchQueue.main.async {
+                cell.userpp.isHidden = false
                 if let url = usersProfileImageUrl {
                     cell.userpp.sd_setImage(with: URL(string: url))
                 } else {
@@ -141,8 +158,6 @@ extension MainPageViewController: UITableViewDelegate, UITableViewDataSource, Po
 
         return cell
     }
-
-
         
    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension

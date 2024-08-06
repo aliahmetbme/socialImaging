@@ -15,6 +15,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet var openCamerabutton: UIButton!
     @IBOutlet var uploadbutton: UIButton!
     @IBOutlet var uploadImage: UIImageView!
+    @IBOutlet var ClearImageButton: UIButton!
     
     let initialImage = UIImage(named: "uploadimage")
 
@@ -27,19 +28,27 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         initialSettings()
         checkIsShouldEnabledUploadButton()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        initialDesign()
-        initialSettings()
-    }
-    
+    /// Set Upload Images
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        selectedImage = info[.editedImage] as? UIImage
+        if let editedImage = info[.editedImage] as? UIImage {
+            selectedImage = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            selectedImage = originalImage
+        } else {
+            showErrorMessage(title: "Error", message: "Görsel alınamadı.")
+            dismiss(animated: true)
+            return
+        }
+        
         uploadImage.image = selectedImage?.resized(to: CGSize(width: uploadImage.frame.width, height: uploadImage.frame.height))
         
-        self.dismiss(animated: true)
+        ClearImageButton.isHidden = false
+        checkIsShouldEnabledUploadButton()
+
+        dismiss(animated: true)
     }
+
     
     private func initialSettings () {
         self.uploadImage.image = UIImage(named: "uploadimage")
@@ -57,6 +66,7 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
         comment.initialTextFieldDesign(cornerRadius:20)
         comment.delegate = self
         
+        uploadImage.isUserInteractionEnabled = true
         let gestureRecognizer  = UITapGestureRecognizer(target: self, action: #selector(takeImageFromGallary))
         uploadImage.addGestureRecognizer(gestureRecognizer)
 
@@ -82,14 +92,23 @@ class UploadImageViewController: UIViewController, UIImagePickerControllerDelega
 // Actions
 extension UploadImageViewController {
     
-    @IBAction func openCameraTakeImage(_ sender: Any) {
-        let pickerController = UIImagePickerController()
-        pickerController.delegate = self
-        pickerController.sourceType = .camera
-        pickerController.showsCameraControls = true
-        pickerController.allowsEditing = true
-        present(pickerController, animated: true, completion: nil)
+    @IBAction func clearImage(_ sender: Any) {
+        self.uploadImage.image = UIImage(named: "uploadimage")
+        ClearImageButton.isHidden = true
+        checkIsShouldEnabledUploadButton()
         
+    }
+    @IBAction func openCameraTakeImage(_ sender: Any) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let pickerController = UIImagePickerController()
+            pickerController.delegate = self
+            pickerController.sourceType = .camera
+            pickerController.showsCameraControls = true
+            pickerController.allowsEditing = true
+            self.present(pickerController, animated: true, completion: nil)
+        } else {
+            showErrorMessage(title: "Error", message: "Kamera kullanılabilir değil.")
+        }
     }
     
     @objc func takeImageFromGallary () {
@@ -97,7 +116,7 @@ extension UploadImageViewController {
         pickerController.delegate = self
         pickerController.sourceType = .photoLibrary
         pickerController.allowsEditing = true
-        present(pickerController, animated: true, completion: nil)
+        self.present(pickerController, animated: true, completion: nil)
         
     }
     
@@ -105,29 +124,27 @@ extension UploadImageViewController {
         let storage = Storage.storage()
         let storageReferance = storage.reference()
         let fireStoreDataBase = Firestore.firestore()
-        let mediaFolder = storageReferance.child("media") // Direk uydurma bir id veriyor, farklılaştırma adına
+        let mediaFolder = storageReferance.child("media")
         let uuid = UUID().uuidString
-        let imageReferance = mediaFolder.child("\(uuid).jpg") // child direk dosya açıyor altına
+        let imageReferance = mediaFolder.child("\(uuid).jpg")
         let userUID = Auth.auth().currentUser?.uid
         
         if let ImageData = selectedImage?.jpegData(compressionQuality: 0.5) {
             self.uploadbutton.isEnabled = false
             imageReferance.putData(ImageData) { StorageMetadata, error in
-                if error != nil {
+               if error != nil {
                     self.showErrorMessage(title: "Error", message:  (error?.localizedDescription ?? "Try again"))
                 } else {
                     imageReferance.downloadURL { url, error in
                         if error == nil {
-                            
-                            if let postImageUrl = url?.absoluteString { // resmin storage'dan linkini alıyor, url'i string e çevirip veriyor
-                                
+                            if let postImageUrl = url?.absoluteString {
                                 let post = PostUploadModel(imageUrl: postImageUrl,
                                                            userUID: userUID,
                                                            comment: self.comment.text!,
                                                            date: (FieldValue.serverTimestamp()),
                                                            likeCount: 0).toDictionary()
                                 
-                                fireStoreDataBase.collection("Post").addDocument(data: post) { error in
+                             fireStoreDataBase.collection("Post").addDocument(data: post) { error in
                                     if error != nil {
                                         self.checkIsShouldEnabledUploadButton()
                                         self.showErrorMessage(title: "Error", message: error?.localizedDescription ?? "Try again")
@@ -163,6 +180,6 @@ extension UploadImageViewController: UITextFieldDelegate {
         comment.text = ""
         print("comment cleared = \(comment.text!)")
         checkIsShouldEnabledUploadButton()
-        return true // TextField'ın temizlenmesine izin vermek için true döndür
+        return true
     }
 }

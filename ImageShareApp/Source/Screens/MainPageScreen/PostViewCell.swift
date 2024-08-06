@@ -32,8 +32,8 @@ class PostViewCell: UITableViewCell {
         postImage.layer.cornerRadius = 10
         postImage.clipsToBounds = true
         postImage.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(30)  // Soldan 30 px padding
-            make.trailing.equalToSuperview().inset(30)  // Sağdan 30 px padding
+            make.leading.equalToSuperview().offset(30) 
+            make.trailing.equalToSuperview().inset(30)
             make.height.equalTo(postImage.snp.width)
         }
         

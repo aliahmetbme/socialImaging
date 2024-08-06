@@ -21,7 +21,8 @@ class FireBaseDBService {
     func getAllPosts(completion: @escaping (([PostModel]) -> Void)){
         let query: Query = firestore.collection(DBEndPoints.Post.endPointsString)
             .order(by: DBEndPoints.date.endPointsString, descending: true)
-        
+        var postArray: [PostModel] = []
+
         query.getDocuments { querySnapshot, error in
             if let error = error {
                 print("Error fetching posts: \(error)")
@@ -29,7 +30,6 @@ class FireBaseDBService {
                 return
             }
             
-            var postArray: [PostModel] = []
             postArray.removeAll()
             
             for document in querySnapshot!.documents {
@@ -55,7 +55,8 @@ class FireBaseDBService {
                 return
             }
             
-            guard let snapshot = querySnapshot else {
+            guard let snapshot = querySnapshot, !snapshot.isEmpty else {
+                print("Snapshot boş veya hatalı.")
                 completion([],nil)
                 return
             }
@@ -76,7 +77,6 @@ class FireBaseDBService {
             }
         }
     }
-
 
     func createPostModel(from document: DocumentSnapshot) -> PostModel {
         let documentId = document.documentID
@@ -186,9 +186,7 @@ func getUsersOwnPosts (tableView: UITableView, filterField: String, completion: 
             ]) { error in
                 if let error = error {
                     print("Error updating like count: \(error)")
-                } else {
-                    // Beğenilen postun güncellenmesini dinle
-                }
+                } 
             }
         }
     }
