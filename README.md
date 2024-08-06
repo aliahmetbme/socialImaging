@@ -35,14 +35,14 @@
 
 ## Some UI Images
 
-<div style="display: flex; flex-direction: column; justify-content: space-between;">
-  <div style="display: flex;">
-    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/2.jpg" alt="Banner 1" width="100%" />
-    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/3.jpg" alt="Banner 2" width="100%" />
+<div style="display: flex; flex-direction: column; gap: 20px;">
+  <div style="display: flex; justify-content: space-between;">
+    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/2.jpg" alt="Banner 1" style="width: 49%;" />
+    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/3.jpg" alt="Banner 2" style="width: 49%;" />
   </div>
-  <div style="display: flex;">
-    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/4.jpg" alt="Banner 3" width="100%" />
-    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/5.jpg" alt="Banner 4" width="100%" />
+  <div style="display: flex; justify-content: space-between;">
+    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/4.jpg" alt="Banner 3" style="width: 49%;" />
+    <img src="https://github.com/aliahmetbme/socialImaging/blob/main/ImageShareApp/Source/Resource/ProjectImages/5.jpg" alt="Banner 4" style="width: 49%;" />
   </div>
 </div>
 
